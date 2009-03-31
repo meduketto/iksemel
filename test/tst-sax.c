@@ -349,6 +349,13 @@ main (int argc, char *argv[])
 	element (IKS_TAG, IKS_CLOSE, "a", 0);
 	test ();
 
+	document ("<a><b x1 ='lala'/><c x2\t= \t'bibi'/></a>");
+	element (IKS_TAG, IKS_OPEN, "a", 0);
+	element (IKS_TAG, IKS_SINGLE, "b", "x1", "lala", 0);
+	element (IKS_TAG, IKS_SINGLE, "c", "x2", "bibi", 0);
+	element (IKS_TAG, IKS_CLOSE, "a", 0);
+	test ();
+
 	document ("<test>\xFF</test>");
 	test_bad (6);
 

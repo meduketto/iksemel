@@ -375,6 +375,14 @@ sax_core (iksparser *prs, char *buf, int len)
 					prs->context = C_VALUE;
 					break;
 				}
+				if (IS_WHITESPACE(c)) {
+					if (stack_old != -1) STACK_PUSH (buf + stack_old, pos - stack_old);
+					stack_old = -1;
+					STACK_PUSH_END;
+					prs->oldcontext = C_ATTRIBUTE_1;
+					prs->context = C_WHITESPACE;
+					break;
+				}
 				if (stack_old == -1) stack_old = pos;
 				break;
 
@@ -396,6 +404,7 @@ sax_core (iksparser *prs, char *buf, int len)
 				break;
 
 			case C_VALUE:
+				if (IS_WHITESPACE(c)) break;
 				prs->atts[prs->attcur + 1] = STACK_PUSH_START;
 				if ('\'' == c) {
 					prs->context = C_VALUE_APOS;

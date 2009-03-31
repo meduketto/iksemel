@@ -1,3 +1,8 @@
+2009-03-31  Gurer
+	* Patch by Timothy Lee:
+	  sax.c: Whitespace between "attr, =, value" is valid now.
+	  tst-sax.c: I also added a simple test for that.
+
 2007-08-10  Gurer
 	* version bump to 1.4 after the release
 
