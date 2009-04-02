@@ -356,6 +356,12 @@ main (int argc, char *argv[])
 	element (IKS_TAG, IKS_CLOSE, "a", 0);
 	test ();
 
+	document ("<a>[[bg:Чингис хан]][[bn:চেঙ্গিজ খান]]</a>");
+	element (IKS_TAG, IKS_OPEN, "a", 0);
+	element (IKS_CDATA, "[[bg:Чингис хан]][[bn:চেঙ্গিজ খান]]");
+	element (IKS_TAG, IKS_CLOSE, "a", 0);
+	test ();
+
 	document ("<test>\xFF</test>");
 	test_bad (6);
 
@@ -379,13 +385,13 @@ main (int argc, char *argv[])
 	test_bad (16);
 
 	document ("<a>\xC0\x80</a>");
-	test_bad (3);
+	test_bad (4);
 
 	document ("<\x8F\x85></\x8F\x85>");
 	test_bad (1);
 
 	document ("<utf8>\xC1\x80<br/>\xED\x95\x9C\xEA\xB5\xAD\xEC\x96\xB4<err>\xC1\x65</err></utf8>");
-	test_bad (28);
+	test_bad (7);
 
 	return 0;
 }

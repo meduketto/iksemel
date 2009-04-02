@@ -70,6 +70,7 @@ struct iksparser_struct {
 
 	int uni_max;
 	int uni_len;
+	unsigned int uni_char;
 };
 
 iksparser *
@@ -208,8 +209,24 @@ sax_core (iksparser *prs, char *buf, int len)
 		if (0 == c || 0xFE == c || 0xFF == c) return IKS_BADXML;
 		if (prs->uni_max) {
 			if ((c & 0xC0) != 0x80) return IKS_BADXML;
+			prs->uni_char <<= 6;
+			prs->uni_char += (c & 0x3f);
 			prs->uni_len++;
-			if (prs->uni_len == prs->uni_max) prs->uni_max = 0;
+			if (prs->uni_len == prs->uni_max) {
+				/* Security check: avoid overlong sequences */
+				if (prs->uni_max == 2 && prs->uni_char < 0x80)
+					return IKS_BADXML;
+				if (prs->uni_max == 3 && prs->uni_char < 0x7FF)
+					return IKS_BADXML;
+				if (prs->uni_max == 4 && prs->uni_char < 0xffff)
+					return IKS_BADXML;
+				if (prs->uni_max == 5 && prs->uni_char < 0x1fffff)
+					return IKS_BADXML;
+				if (prs->uni_max == 6 && prs->uni_char < 0x3ffffff)
+					return IKS_BADXML;
+				prs->uni_max = 0;
+				prs->uni_char = 0;
+			}
 			goto cont;
 		} else {
 			if (c & 0x80) {
@@ -232,7 +249,7 @@ sax_core (iksparser *prs, char *buf, int len)
 				} else {
 					return IKS_BADXML;
 				}
-				if ((c & mask) == 0) return IKS_BADXML;
+				prs->uni_char = c & mask;
 				prs->uni_len = 1;
 				if (stack_old == -1
 					&& (prs->context == C_TAG
@@ -631,6 +648,7 @@ iks_parser_reset (iksparser *prs)
 	prs->nr_lines = 0;
 	prs->uni_max = 0;
 	prs->uni_len = 0;
+	prs->uni_char = 0;
 }
 
 void
