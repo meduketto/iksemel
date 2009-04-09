@@ -1,12 +1,33 @@
 
-This file contains a simple list of TODO items.
-More general ideas can be found in the roadmap part of the file HACKING.
+==> 1.4 release, api/abi compatible, should be released asap
 
-(in order of importance)
+* md5.c bugs must be fixed
+* there are small build system bugs (issue #4, #5, #13)
+* io bugs (issue #8, #10)
 
+
+==> 1.5 release, abi/api compatible, will be released in a few months
+
+* ssl layer abstraction, openssl/gnutls build option
+* integrade python binding from pardus into the main tree
 * parser: &#1234; and &#xA25F; like entities must be unescaped.
+* xml pretty printer
+* file stream based xml printer
+
+
+==> 2.0 release, minor abi/api changes, hopefully in 2009 :)
+
+* rewrite sax parser for better performance and correctness
+* offer a high level jabber api for managing connection details
+* input/output modules for encodings (utf8/16), compression (zlib,bzip2),
+and source (file, memory, network stream).
+
+
+==> ideas
+
 * packet filter or a generic xml filter? something like a simplified xpath?
 * a separate utf8 validator function can be useful
 * utf8 <-> utf16 conversion functions can be useful
+
 
 anything else? :-)
