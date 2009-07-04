@@ -1,3 +1,7 @@
+2009-07-04  Gurer
+	* md5.c: use iks_malloc/free like everywhere else.
+	  (reported by Vinay Deshpande)
+
 2009-04-02  Gurer
 	* sax.c: utf8 validation bug is fixed. Some valid utf8
 	  sequences were not allowed before. Security check is moved
