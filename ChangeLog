@@ -1,6 +1,7 @@
 2009-07-04  Gurer
 	* md5.c: use iks_malloc/free like everywhere else.
 	  (reported by Vinay Deshpande)
+	* stream.c: don't leak locally processed challenge node.
 
 2009-04-02  Gurer
 	* sax.c: utf8 validation bug is fixed. Some valid utf8

@@ -303,9 +303,10 @@ tagHook (struct stream_data *data, char *name, char **atts, int type)
 			}
 			if (NULL == iks_parent (x)) {
 				data->current = NULL;
-				if (iks_strcmp (name, "challenge") == 0)
+				if (iks_strcmp (name, "challenge") == 0) {
 					iks_sasl_challenge(data, x);
-				else if (iks_strcmp (name, "stream:error") == 0) {
+					iks_delete (x);
+				} else if (iks_strcmp (name, "stream:error") == 0) {
 					err = data->streamHook (data->user_data, IKS_NODE_ERROR, x);
 					if (err != IKS_OK) return err;
 				} else {
