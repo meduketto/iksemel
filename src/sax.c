@@ -367,7 +367,7 @@ sax_core (iksparser *prs, char *buf, int len)
 					memset (prs->atts, 0, sizeof(char *) * 2 * 12);
 					prs->attcur = 0;
 				} else {
-					if (prs->attcur >= (prs->attmax * 2)) {
+					if (prs->attcur >= ((prs->attmax - 1) * 2)) {
 						void *tmp;
 						prs->attmax += 12;
 						tmp = iks_malloc (sizeof(char *) * 2 * prs->attmax);
