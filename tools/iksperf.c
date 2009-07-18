@@ -52,9 +52,9 @@ print_usage (void)
 }
 
 /* if not 0, file is parsed in block_size byte blocks */
-int block_size;
+size_t block_size;
 
-char *load_file (const char *fname, int *sizeptr)
+char *load_file (const char *fname, size_t *sizeptr)
 {
 	FILE *f;
 	char *buf;
@@ -112,11 +112,12 @@ cdataHook (void *udata, char *data, size_t len)
 }
 
 void
-sax_test (char *buf, int len)
+sax_test (char *buf, size_t len)
 {
 	unsigned long time;
 	iksparser *prs;
-	int bs, i, err;
+	size_t bs, i;
+	int err;
 
 	bs = block_size;
 	if (0 == bs) bs = len;
@@ -153,9 +154,10 @@ sax_test (char *buf, int len)
 	iks_parser_delete (prs);
 }
 
-void dom_test (char *buf, int len)
+void dom_test (char *buf, size_t len)
 {
-	int bs, i, err;
+	size_t bs, i;
+	int err;
 	iksparser *prs;
 	unsigned long time;
 	iks *x;
@@ -202,7 +204,7 @@ void dom_test (char *buf, int len)
 }
 
 void
-serialize_test (char *buf, int len)
+serialize_test (char *buf, size_t len)
 {
 	unsigned long time;
 	iks *x;
@@ -238,7 +240,7 @@ serialize_test (char *buf, int len)
 }
 
 void
-sha_test (char *buf, int len)
+sha_test (char *buf, size_t len)
 {
 	unsigned long time;
 	iksha *s;
@@ -247,7 +249,7 @@ sha_test (char *buf, int len)
 	t_reset ();
 
 	s = iks_sha_new ();
-	iks_sha_hash (s, buf, len, 1);
+	iks_sha_hash (s, (unsigned char *) buf, len, 1);
 	iks_sha_print (s, out);
 	out[40] = '\0';
 	iks_sha_delete (s);
@@ -302,7 +304,7 @@ main (int argc, char *argv[])
 	}
 	for (; optind < argc; optind++) {
 		char *buf;
-		int len;
+		size_t len;
 
 		buf = load_file (argv[optind], &len);
 		if (test_type & 1) sax_test (buf, len);

@@ -1,5 +1,6 @@
 2009-07-18  Gurer
 	* sax.c: Fix attribute array out-of-bounds condition.
+	* iksperf.c: Fix a warning, and use size_t instead of int.
 
 2009-07-04  Gurer
 	* md5.c: use iks_malloc/free like everywhere else.
