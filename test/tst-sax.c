@@ -278,88 +278,91 @@ test_bad (int badbyte)
 	exit (1);
 }
 
+/* No more attributes */
+#define NMA ((char *) 0)
+
 int
 main (int argc, char *argv[])
 {
 	document ("<lonely/>");
-	element (IKS_TAG, IKS_SINGLE, "lonely", 0);
+	element (IKS_TAG, IKS_SINGLE, "lonely", NMA);
 	test ();
 
 	document ("<?xml version='1.0'?><parent><child/><child/>child</parent>");
-	element (IKS_TAG, IKS_OPEN, "parent", 0);
-	element (IKS_TAG, IKS_SINGLE, "child", 0);
-	element (IKS_TAG, IKS_SINGLE, "child", 0);
+	element (IKS_TAG, IKS_OPEN, "parent", NMA);
+	element (IKS_TAG, IKS_SINGLE, "child", NMA);
+	element (IKS_TAG, IKS_SINGLE, "child", NMA);
 	element (IKS_CDATA, "child");
 	element (IKS_TAG, IKS_CLOSE, "parent");
 	test ();
 
 	document ("<mytag abc='123' id=\"XC72\"></mytag>");
-	element (IKS_TAG, IKS_OPEN, "mytag", "abc", "123", "id", "XC72", 0);
+	element (IKS_TAG, IKS_OPEN, "mytag", "abc", "123", "id", "XC72", NMA);
 	element (IKS_TAG, IKS_CLOSE, "mytag");
 	test ();
 
 	document ("<body>I&apos;m fixing parser&amp;tester for &quot;&lt;&quot; and &quot;&gt;&quot; chars.</body>");
-	element (IKS_TAG, IKS_OPEN, "body", 0);
+	element (IKS_TAG, IKS_OPEN, "body", NMA);
 	element (IKS_CDATA, "I'm fixing parser&tester for \"<\" and \">\" chars.");
 	element (IKS_TAG, IKS_CLOSE, "body");
 	test ();
 
 	document ("<tag a='1' b='2' c='3' d='4' e='5' f='6' g='7' id='xyz9'><sub></sub></tag>");
-	element (IKS_TAG, IKS_OPEN, "tag", "a", "1", "b", "2", "c", "3", "d", "4", "e", "5", "f", "6", "g", "7", "id", "xyz9", 0);
-	element (IKS_TAG, IKS_OPEN, "sub", 0);
+	element (IKS_TAG, IKS_OPEN, "tag", "a", "1", "b", "2", "c", "3", "d", "4", "e", "5", "f", "6", "g", "7", "id", "xyz9", NMA);
+	element (IKS_TAG, IKS_OPEN, "sub", NMA);
 	element (IKS_TAG, IKS_CLOSE, "sub");
 	element (IKS_TAG, IKS_CLOSE, "tag");
 	test ();
 
 	document ("<item url='http://jabber.org'><!-- little comment -->Jabber Site</item>");
-	element (IKS_TAG, IKS_OPEN, "item", "url", "http://jabber.org", 0);
+	element (IKS_TAG, IKS_OPEN, "item", "url", "http://jabber.org", NMA);
 	element (IKS_CDATA, "Jabber Site");
 	element (IKS_TAG, IKS_CLOSE, "item");
 	test ();
 
 	document ("<index><!-- <item> - tag has no childs --><item name='lala' page='42'/></index>");
-	element (IKS_TAG, IKS_OPEN, "index", 0);
-	element (IKS_TAG, IKS_SINGLE, "item", "name", "lala", "page", "42", 0);
+	element (IKS_TAG, IKS_OPEN, "index", NMA);
+	element (IKS_TAG, IKS_SINGLE, "item", "name", "lala", "page", "42", NMA);
 	element (IKS_TAG, IKS_CLOSE, "index");
 	test ();
 
 	document ("<ka>1234<![CDATA[ <ka> lala ] ]] ]]] ]]>4321</ka>");
-	element (IKS_TAG, IKS_OPEN, "ka", 0);
+	element (IKS_TAG, IKS_OPEN, "ka", NMA);
 	element (IKS_CDATA, "1234 <ka> lala ] ]] ]]] 4321");
 	element (IKS_TAG, IKS_CLOSE, "ka");
 	test ();
 
 	document ("<test><standalone be='happy'/>abcd<br/>&lt;escape&gt;</test>");
-	element (IKS_TAG, IKS_OPEN, "test", 0);
-	element (IKS_TAG, IKS_SINGLE, "standalone", "be", "happy", 0);
+	element (IKS_TAG, IKS_OPEN, "test", NMA);
+	element (IKS_TAG, IKS_SINGLE, "standalone", "be", "happy", NMA);
 	element (IKS_CDATA, "abcd");
-	element (IKS_TAG, IKS_SINGLE, "br", 0);
+	element (IKS_TAG, IKS_SINGLE, "br", NMA);
 	element (IKS_CDATA, "<escape>");
 	element (IKS_TAG, IKS_CLOSE, "test");
 	test ();
 
 	document ("<a><b>john&amp;mary<c><d e='f' g='123456' h='madcat' klm='nop'/></c></b></a>");
-	element (IKS_TAG, IKS_OPEN, "a", 0);
-	element (IKS_TAG, IKS_OPEN, "b", 0);
+	element (IKS_TAG, IKS_OPEN, "a", NMA);
+	element (IKS_TAG, IKS_OPEN, "b", NMA);
 	element (IKS_CDATA, "john&mary");
-	element (IKS_TAG, IKS_OPEN, "c", 0);
-	element (IKS_TAG, IKS_SINGLE, "d", "e", "f", "g", "123456", "h", "madcat", "klm", "nop", 0);
-	element (IKS_TAG, IKS_CLOSE, "c", 0);
-	element (IKS_TAG, IKS_CLOSE, "b", 0);
-	element (IKS_TAG, IKS_CLOSE, "a", 0);
+	element (IKS_TAG, IKS_OPEN, "c", NMA);
+	element (IKS_TAG, IKS_SINGLE, "d", "e", "f", "g", "123456", "h", "madcat", "klm", "nop", NMA);
+	element (IKS_TAG, IKS_CLOSE, "c", NMA);
+	element (IKS_TAG, IKS_CLOSE, "b", NMA);
+	element (IKS_TAG, IKS_CLOSE, "a", NMA);
 	test ();
 
 	document ("<a><b x1 ='lala'/><c x2\t= \t'bibi'/></a>");
-	element (IKS_TAG, IKS_OPEN, "a", 0);
-	element (IKS_TAG, IKS_SINGLE, "b", "x1", "lala", 0);
-	element (IKS_TAG, IKS_SINGLE, "c", "x2", "bibi", 0);
-	element (IKS_TAG, IKS_CLOSE, "a", 0);
+	element (IKS_TAG, IKS_OPEN, "a", NMA);
+	element (IKS_TAG, IKS_SINGLE, "b", "x1", "lala", NMA);
+	element (IKS_TAG, IKS_SINGLE, "c", "x2", "bibi", NMA);
+	element (IKS_TAG, IKS_CLOSE, "a", NMA);
 	test ();
 
 	document ("<a>[[bg:Чингис хан]][[bn:চেঙ্গিজ খান]]</a>");
-	element (IKS_TAG, IKS_OPEN, "a", 0);
+	element (IKS_TAG, IKS_OPEN, "a", NMA);
 	element (IKS_CDATA, "[[bg:Чингис хан]][[bn:চেঙ্গিজ খান]]");
-	element (IKS_TAG, IKS_CLOSE, "a", 0);
+	element (IKS_TAG, IKS_CLOSE, "a", NMA);
 	test ();
 
 	document ("<test>\xFF</test>");

@@ -1,3 +1,6 @@
+2009-07-20  Gurer
+	* tst-sax.c: Fix a va_arg bug with 64bit platforms.
+
 2009-07-18  Gurer
 	* sax.c: Fix attribute array out-of-bounds condition.
 	* iksperf.c: Fix a warning, and use size_t instead of int.
