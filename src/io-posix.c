@@ -7,6 +7,7 @@
 #include "common.h"
 #include "iksemel.h"
 
+#include <errno.h>
 #ifdef _WIN32
 #include <winsock.h>
 #else
@@ -96,8 +97,22 @@ static int
 io_send (void *socket, const char *data, size_t len)
 {
 	int sock = (int) socket;
+	int ret;
 
-	if (send (sock, data, len, 0) == -1) return IKS_NET_RWERR;
+	while (len > 0) {
+		ret = send (sock, data, len, 0);
+		if (ret == -1) {
+			if (errno == EAGAIN || errno == EINTR) {
+				// Signalled, try again
+				continue;
+			}
+			// Real error
+			return IKS_NET_RWERR;
+		} else {
+			len -= ret;
+			data += ret;
+		}
+	}
 	return IKS_OK;
 }
 
@@ -117,7 +132,9 @@ io_recv (void *socket, char *buffer, size_t buf_len, int timeout)
 	tv.tv_sec = timeout;
 	if (timeout != -1) tvptr = &tv; else tvptr = NULL;
 	if (select (sock + 1, &fds, NULL, NULL, tvptr) > 0) {
-		len = recv (sock, buffer, buf_len, 0);
+		do {
+			len = recv (sock, buffer, buf_len, 0);
+		} while (len == -1 && (errno == EAGAIN || errno == EINTR));
 		if (len > 0) {
 			return len;
 		} else if (len <= 0) {

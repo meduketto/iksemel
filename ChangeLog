@@ -1,3 +1,6 @@
+2009-07-22  Gurer
+	* io-posix.c: send/recv now handles EAGAIN/EINTR.
+
 2009-07-21  Gurer
 	* tst-md5.c: MD5 test improved with examples from RFC1321
 	* iksroster.c: Plain text auth option patch from issue tracker.
