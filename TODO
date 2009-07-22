@@ -1,11 +1,4 @@
 
-==> 1.4 release, api/abi compatible, should be released asap
-
-* md5.c bugs must be fixed
-* there are small build system bugs (issue #4, #5, #13)
-* io bugs (issue #8, #10)
-
-
 ==> 1.5 release, abi/api compatible, will be released in a few months
 
 * ssl layer abstraction, openssl/gnutls build option
