@@ -1,4 +1,4 @@
-V1.4 (2009-07-xx)
+V1.4 (2009-07-25)
 * Some previously rejected valid UTF8 sequences are now accepted.
 * Whitespace is allowed between attribute name, equal sign and value.
 * Small fixes all around (see ChangeLog).
