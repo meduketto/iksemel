@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR([configure.ac])
-AM_INIT_AUTOMAKE(iksemel,1.4)
+AM_INIT_AUTOMAKE(iksemel,1.5)
 AM_CONFIG_HEADER(include/config.h)
 
 AC_CANONICAL_HOST
