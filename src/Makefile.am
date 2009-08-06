@@ -18,6 +18,7 @@ libiksemel_la_SOURCES = \
 	dom.c \
 	$(posix_c) \
 	stream.c \
+	tls-gnutls.c \
 	sha.c \
 	jabber.c \
 	filter.c \
