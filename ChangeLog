@@ -1,3 +1,6 @@
+2009-08-07  Gurer
+	* tls-gnutls.c: support timeout value in tls_recv
+
 2009-08-06  Gurer
 	* iksemel.h: new ikstls structure and definitions
 	* tls-gnutls.c: new file, GNUTLS implemantation moved here

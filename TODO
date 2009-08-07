@@ -5,13 +5,17 @@
 * integrade python binding from pardus into the main tree
 * parser: &#1234; and &#xA25F; like entities must be unescaped.
 
+
+==> 1.6 release abi/api compatible, early 2010
+
+* rewrite sax parser for better performance and correctness
+
 * xml pretty printer
 * file stream based xml printer
 
 
-==> 2.0 release, minor abi/api changes, hopefully in 2009 :)
+==> 2.0 release, major abi/api changes
 
-* rewrite sax parser for better performance and correctness
 * offer a high level jabber api for managing connection details
 * input/output modules for encodings (utf8/16), compression (zlib,bzip2),
 and source (file, memory, network stream).

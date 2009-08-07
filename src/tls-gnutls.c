@@ -12,7 +12,7 @@
 #include <gnutls/gnutls.h>
 
 /* issues here:
-** 1. support timeout in tls_recv
+** 1. handle GNUTLS_E_AGAIN in handshake
 ** 2. eol condition in tls_recv needs examination
 ** 3. implement openssl version of this file
 ** 4. conditional compiling for gnutls/openssl/none
@@ -24,6 +24,7 @@ struct ikstls_data {
 	gnutls_certificate_credentials cred;
 	ikstransport *trans;
 	void *sock;
+	int timeout;
 };
 
 static size_t
@@ -41,7 +42,7 @@ tls_pull (struct ikstls_data *data, char *buffer, size_t len)
 {
 	int ret;
 
-	ret = data->trans->recv (data->sock, buffer, len, -1);
+	ret = data->trans->recv (data->sock, buffer, len, data->timeout);
 	if (ret == -1) return (size_t) -1;
 	return ret;
 }
@@ -64,6 +65,7 @@ tls_handshake (struct ikstls_data **datap, ikstransport *trans, void *sock)
 	memset (data, 0, sizeof(*data));
 	data->trans = trans;
 	data->sock = sock;
+	data->timeout = -1;
 
 	if (gnutls_global_init () != 0) {
 		iks_free (data);
@@ -115,6 +117,7 @@ tls_send (struct ikstls_data *data, const char *buf, size_t size)
 static int
 tls_recv (struct ikstls_data *data, char *buf, size_t size, int timeout)
 {
+	data->timeout = timeout;
 	return gnutls_record_recv (data->sess, buf, size);
 }
 
