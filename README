@@ -22,6 +22,8 @@ Requirements:
 Libtool, Automake and Autoconf packages are required for compiling cvs
 versions.
 
+TLS support requires GNUTLS (>2.0.0) library.
+
 
 Compiling & Install:
 --------------------

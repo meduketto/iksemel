@@ -1,3 +1,8 @@
+2009-08-30  Gurer
+	* configure.ac: use pkgconfig for checking gnutls
+	* INSTALL: updated by the autoreconf call
+	* README: gnutls dependency is mentioned
+
 2009-08-07  Gurer
 	* tls-gnutls.c: support timeout value in tls_recv
 
