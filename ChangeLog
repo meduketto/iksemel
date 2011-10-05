@@ -1,3 +1,7 @@
+2011-10-05  Gurer
+	* md5.c: Fix padding for multiples of 64 bytes
+	* tst-md5.c: Test coverage for fixed bug
+
 2009-08-30  Gurer
 	* configure.ac: use pkgconfig for checking gnutls
 	* INSTALL: updated by the autoreconf call

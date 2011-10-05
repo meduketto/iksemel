@@ -107,6 +107,10 @@ void iks_md5_hash(iksmd5 *md5, const unsigned char *data, size_t slen, int finis
 	if (finish) {
 		md5->total[0] += 8*md5->blen;
 		md5->total[1] += (md5->total[0] < 8*md5->blen);
+		if (md5->blen == 64) {
+			iks_md5_compute(md5);
+			md5->blen = 0;
+		}
 		md5->buffer[(md5->blen)++] = 0x80;
 		if (md5->blen > 56) {
 			while (md5->blen < 64)
