@@ -1,3 +1,7 @@
+2011-10-06  Gurer
+	* configure.ac: Check openssl, it is preferred over gnutls
+	* tls-openssl.c: TLS backend for the openssl library
+
 2011-10-05  Gurer
 	* md5.c: Fix padding for multiples of 64 bytes
 	* tst-md5.c: Test coverage for fixed bug

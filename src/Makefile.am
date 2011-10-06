@@ -19,6 +19,7 @@ libiksemel_la_SOURCES = \
 	$(posix_c) \
 	stream.c \
 	tls-gnutls.c \
+	tls-openssl.c \
 	sha.c \
 	jabber.c \
 	filter.c \
@@ -26,5 +27,5 @@ libiksemel_la_SOURCES = \
 	base64.c
 
 libiksemel_la_LDFLAGS = -version-info 4:1:1 -no-undefined
-libiksemel_la_CFLAGS = $(CFLAGS) $(LIBGNUTLS_CFLAGS)
-libiksemel_la_LIBADD = $(LIBGNUTLS_LIBS)
+libiksemel_la_CFLAGS = $(CFLAGS) $(LIBGNUTLS_CFLAGS) $(LIBOPENSSL_CFLAGS)
+libiksemel_la_LIBADD = $(LIBGNUTLS_LIBS) $(LIBOPENSSL_LIBS)

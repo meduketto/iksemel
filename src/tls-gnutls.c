@@ -138,10 +138,14 @@ ikstls iks_default_tls = {
 };
 
 #else /* HAVE_GNUTLS */
+
+#ifndef HAVE_OPENSSL
 ikstls iks_default_tls = {
 	NULL,
 	NULL,
 	NULL,
 	NULL
 };
+#endif /* HAVE_OPENSSL */
+
 #endif /* HAVE_GNUTLS */

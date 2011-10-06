@@ -45,14 +45,26 @@ AC_SEARCH_LIBS(recv,socket)
 AC_CHECK_FUNCS(getopt_long)
 AC_CHECK_FUNCS(getaddrinfo)
 
-dnl Check GNU TLS
-PKG_CHECK_MODULES(GNUTLS, gnutls >= 2.0.0, have_gnutls=yes, have_gnutls=no) 
-if test "x$have_gnutls" = "xyes"; then
-  LIBGNUTLS_CFLAGS="$GNUTLS_CFLAGS"
-  LIBGNUTLS_LIBS="$GNUTLS_LIBS"
-  AC_SUBST(LIBGNUTLS_CFLAGS)
-  AC_SUBST(LIBGNUTLS_LIBS)
-  AC_DEFINE(HAVE_GNUTLS, 1, [whether to use GnuTSL support.]) 
+dnl Check OpenSSL
+PKG_CHECK_MODULES(OPENSSL, openssl >= 0.9.8, have_openssl=yes, have_openssl=no) 
+if test "x$have_openssl" = "xyes"; then
+  LIBOPENSSL_CFLAGS="$OPENSSL_CFLAGS"
+  LIBOPENSSL_LIBS="$OPENSSL_LIBS"
+  AC_SUBST(LIBOPENSSL_CFLAGS)
+  AC_SUBST(LIBOPENSSL_LIBS)
+  AC_DEFINE(HAVE_OPENSSL, 1, [whether to use OpenSSL support.]) 
+fi
+
+if test "x$have_openssl" = "xno"; then
+  dnl Check GNU TLS
+  PKG_CHECK_MODULES(GNUTLS, gnutls >= 2.0.0, have_gnutls=yes, have_gnutls=no) 
+  if test "x$have_gnutls" = "xyes"; then
+    LIBGNUTLS_CFLAGS="$GNUTLS_CFLAGS"
+    LIBGNUTLS_LIBS="$GNUTLS_LIBS"
+    AC_SUBST(LIBGNUTLS_CFLAGS)
+    AC_SUBST(LIBGNUTLS_LIBS)
+    AC_DEFINE(HAVE_GNUTLS, 1, [whether to use GnuTSL support.]) 
+  fi
 fi
 
 dnl Check -Wall flag of GCC
