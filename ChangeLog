@@ -1,4 +1,7 @@
 2011-10-06  Gurer
+	* configure.ac: without-openssl and without-gnutls options added
+
+2011-10-06  Gurer
 	* configure.ac: Check openssl, it is preferred over gnutls
 	* tls-openssl.c: TLS backend for the openssl library
 

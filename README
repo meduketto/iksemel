@@ -3,7 +3,7 @@
 
             http://code.google.com/p/iksemel
 
-Copyright (c) 2000-2007 Gurer Ozen <meduketto at gmail.com>
+Copyright (c) 2000-2011 Gurer Ozen <meduketto at gmail.com>
 
 
 Introduction:
@@ -22,7 +22,7 @@ Requirements:
 Libtool, Automake and Autoconf packages are required for compiling cvs
 versions.
 
-TLS support requires GNUTLS (>2.0.0) library.
+TLS support requires OpenSSL (>0.9.8) or GNUTLS (>2.0.0) library.
 
 
 Compiling & Install:

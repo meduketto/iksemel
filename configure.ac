@@ -13,6 +13,7 @@ AC_PROG_INSTALL
 AC_CHECK_TOOL(OBJDUMP, objdump, :)
 AM_PROG_LIBTOOL
 AC_LANG_C
+PKG_PROG_PKG_CONFIG
 
 dnl Checks for header files
 AC_HEADER_STDC
@@ -33,10 +34,10 @@ esac
 
 dnl Check for posix io
 AC_ARG_ENABLE(default-io,
-[  --disable-default-io    disable builtin socket transport code ],
-        defio=$enableval, defio=yes)
+  AS_HELP_STRING([--disable-default-io],[disable builtin socket transport code]),
+  defio=$enableval, defio=yes)
 if test "$defio" = yes; then
-	AC_DEFINE(USE_DEFAULT_IO,1,[Define this is you want default transport])
+  AC_DEFINE(USE_DEFAULT_IO,1,[Define this is you want default transport])
 fi
 AM_CONDITIONAL(DO_POSIX, test "x$defio" = "xyes")
 
@@ -45,25 +46,41 @@ AC_SEARCH_LIBS(recv,socket)
 AC_CHECK_FUNCS(getopt_long)
 AC_CHECK_FUNCS(getaddrinfo)
 
+dnl Options for overriding TLS checks
+AC_ARG_WITH([openssl],
+  AS_HELP_STRING([--without-openssl],[disable checking for openssl]),
+  [with_openssl=$enableval],
+  [with_openssl=yes]
+)
+AC_ARG_WITH([gnutls],
+  AS_HELP_STRING([--without-gnutls],[disable checking for GNU TLS]),
+  [with_gnutls=$enableval],
+  [with_gnutls=yes]
+)
+
 dnl Check OpenSSL
-PKG_CHECK_MODULES(OPENSSL, openssl >= 0.9.8, have_openssl=yes, have_openssl=no) 
-if test "x$have_openssl" = "xyes"; then
-  LIBOPENSSL_CFLAGS="$OPENSSL_CFLAGS"
-  LIBOPENSSL_LIBS="$OPENSSL_LIBS"
-  AC_SUBST(LIBOPENSSL_CFLAGS)
-  AC_SUBST(LIBOPENSSL_LIBS)
-  AC_DEFINE(HAVE_OPENSSL, 1, [whether to use OpenSSL support.]) 
+if test "x$with_openssl" = "xyes"; then
+  PKG_CHECK_MODULES([OPENSSL], openssl >= 0.9.8, have_openssl=yes, have_openssl=no)
+  if test "x$have_openssl" = "xyes"; then
+    LIBOPENSSL_CFLAGS="$OPENSSL_CFLAGS"
+    LIBOPENSSL_LIBS="$OPENSSL_LIBS"
+    AC_SUBST(LIBOPENSSL_CFLAGS)
+    AC_SUBST(LIBOPENSSL_LIBS)
+    AC_DEFINE(HAVE_OPENSSL, 1, [whether to use OpenSSL support.])
+  fi
 fi
 
-if test "x$have_openssl" = "xno"; then
-  dnl Check GNU TLS
-  PKG_CHECK_MODULES(GNUTLS, gnutls >= 2.0.0, have_gnutls=yes, have_gnutls=no) 
-  if test "x$have_gnutls" = "xyes"; then
-    LIBGNUTLS_CFLAGS="$GNUTLS_CFLAGS"
-    LIBGNUTLS_LIBS="$GNUTLS_LIBS"
-    AC_SUBST(LIBGNUTLS_CFLAGS)
-    AC_SUBST(LIBGNUTLS_LIBS)
-    AC_DEFINE(HAVE_GNUTLS, 1, [whether to use GnuTSL support.]) 
+dnl Check GNU TLS
+if test "x$with_gnutls" = "xyes"; then
+  if test "x$have_openssl" != "xyes"; then
+    PKG_CHECK_MODULES([GNUTLS], gnutls >= 2.0.0, have_gnutls=yes, have_gnutls=no)
+    if test "x$have_gnutls" = "xyes"; then
+      LIBGNUTLS_CFLAGS="$GNUTLS_CFLAGS"
+      LIBGNUTLS_LIBS="$GNUTLS_LIBS"
+      AC_SUBST(LIBGNUTLS_CFLAGS)
+      AC_SUBST(LIBGNUTLS_LIBS)
+      AC_DEFINE(HAVE_GNUTLS, 1, [whether to use GnuTSL support.])
+    fi
   fi
 fi
 
