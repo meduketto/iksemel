@@ -134,7 +134,6 @@ tls_handshake (struct ikstls_data **datap, ikstransport *trans, void *sock)
 		return IKS_NOMEM;
 	}
 
-	// FIXME: use the transport
 	bio = BIO_new (&my_bio_method);
 	bio->ptr = (void *) data;
 	SSL_set_bio (data->ssl, bio, bio);

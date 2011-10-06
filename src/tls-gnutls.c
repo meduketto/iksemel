@@ -14,8 +14,6 @@
 /* issues here:
 ** 1. handle GNUTLS_E_AGAIN in handshake
 ** 2. eol condition in tls_recv needs examination
-** 3. implement openssl version of this file
-** 4. conditional compiling for gnutls/openssl/none
 ** 5. access to gnutls settings? how to do that portably?
 */
 
