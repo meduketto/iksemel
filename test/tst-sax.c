@@ -332,6 +332,18 @@ main (int argc, char *argv[])
 	element (IKS_TAG, IKS_CLOSE, "ka");
 	test ();
 
+	document ("<data><![CDATA[[TEST]]]></data>");
+	element (IKS_TAG, IKS_OPEN, "data", NMA);
+	element (IKS_CDATA, "[TEST]");
+	element (IKS_TAG, IKS_CLOSE, "data");
+	test ();
+
+	document ("<data><![CDATA[[TEST]]]]></data>");
+	element (IKS_TAG, IKS_OPEN, "data", NMA);
+	element (IKS_CDATA, "[TEST]]");
+	element (IKS_TAG, IKS_CLOSE, "data");
+	test ();
+
 	document ("<test><standalone be='happy'/>abcd<br/>&lt;escape&gt;</test>");
 	element (IKS_TAG, IKS_OPEN, "test", NMA);
 	element (IKS_TAG, IKS_SINGLE, "standalone", "be", "happy", NMA);

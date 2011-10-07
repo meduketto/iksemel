@@ -593,12 +593,19 @@ sax_core (iksparser *prs, char *buf, int len)
 					old = pos + 1;
 					prs->context = C_CDATA;
 				} else {
-					if (prs->cdataHook) {
-						err = prs->cdataHook (prs->user_data, "]]", 2);
-						if (IKS_OK != err) return err;
-					}
 					old = pos;
-					prs->context = C_SECT_CDATA_C;
+					if (']' == c) {
+						if (prs->cdataHook) {
+							err = prs->cdataHook (prs->user_data, "]", 1);
+							if (IKS_OK != err) return err;
+						}
+					} else {
+						prs->context = C_SECT_CDATA_C;
+						if (prs->cdataHook) {
+							err = prs->cdataHook (prs->user_data, "]]", 2);
+							if (IKS_OK != err) return err;
+						}
+					}
 				}
 				break;
 
