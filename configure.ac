@@ -46,6 +46,13 @@ AC_SEARCH_LIBS(recv,socket)
 AC_CHECK_FUNCS(getopt_long)
 AC_CHECK_FUNCS(getaddrinfo)
 
+dnl Check -Wall flag of GCC
+if test "x$GCC" = "xyes"; then
+  if test -z "`echo "$CFLAGS" | grep "\-Wall" 2> /dev/null`" ; then
+    CFLAGS="$CFLAGS -Wall"
+  fi
+fi
+
 dnl Options for overriding TLS checks
 AC_ARG_WITH([openssl],
   AS_HELP_STRING([--without-openssl],[disable checking for openssl]),
@@ -84,12 +91,45 @@ if test "x$with_gnutls" = "xyes"; then
   fi
 fi
 
-dnl Check -Wall flag of GCC
-if test "x$GCC" = "xyes"; then
-  if test -z "`echo "$CFLAGS" | grep "\-Wall" 2> /dev/null`" ; then
-    CFLAGS="$CFLAGS -Wall"
-  fi
+dnl Option for overriding Python check
+AC_ARG_ENABLE([python],
+  AS_HELP_STRING([--disable-python],[disable checking for Python bindings]),
+  [with_python=$enableval],
+  [with_python=yes]
+)
+
+dnl a macro to check for ability to create python extensions
+dnl  AM_CHECK_PYTHON_HEADERS([ACTION-IF-POSSIBLE], [ACTION-IF-NOT-POSSIBLE])
+dnl function also defines PYTHON_INCLUDES
+AC_DEFUN([AM_CHECK_PYTHON_HEADERS],
+[AC_REQUIRE([AM_PATH_PYTHON])
+AC_MSG_CHECKING(for headers required to compile python extensions)
+dnl deduce PYTHON_INCLUDES
+py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
+py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
+PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
+if test "$py_prefix" != "$py_exec_prefix"; then
+  PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
 fi
+AC_SUBST(PYTHON_INCLUDES)
+dnl check if the headers exist:
+save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
+AC_TRY_CPP([#include <Python.h>],dnl
+[AC_MSG_RESULT(found)
+$1],dnl
+[AC_MSG_RESULT(not found)
+$2])
+CPPFLAGS="$save_CPPFLAGS"
+])
+
+dnl Check Python for binding
+if test "x$with_python" = "xyes"; then
+  with_python=no
+  AM_PATH_PYTHON([2.2], , [:])
+  AM_CHECK_PYTHON_HEADERS(with_python=yes,[AC_MSG_ERROR(could not find Python headers)])
+fi
+AM_CONDITIONAL([DO_PYTHON], [test "x$with_python" = "xyes"])
 
 dnl Generating makefiles
 AC_CONFIG_FILES([
@@ -98,6 +138,7 @@ iksemel.pc
 src/Makefile
 include/Makefile
 tools/Makefile
+python/Makefile
 test/Makefile
 doc/Makefile
 ])
