@@ -7,5 +7,6 @@ INCLUDES = -I$(top_srcdir)/include $(PYTHON_INCLUDES)
 pyexec_LTLIBRARIES = iksemel.la
 
 iksemel_la_LIBADD = $(top_builddir)/src/libiksemel.la
-iksemel_la_SOURCES = xml.c
+iksemel_la_SOURCES = xml.c document.c exceptions.c
+iksemel_la_CFLAGS = $(CFLAGS) -fno-strict-aliasing
 iksemel_la_LDFLAGS = -avoid-version -module -export-symbols-regex initiksemel

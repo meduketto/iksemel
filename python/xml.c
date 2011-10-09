@@ -4,20 +4,23 @@
 ** modify it under the terms of GNU Lesser General Public License.
 */
 
-#include <Python.h>
+#include "exceptions.h"
+#include "reference.h"
+#include "document.h"
 #include "iksemel.h"
 
 PyObject *iksemel_module;
-
-static PyMethodDef methods[] = {
-	{ NULL, NULL, 0, NULL }
-};
 
 PyMODINIT_FUNC
 initiksemel(void)
 {
 	PyObject *m;
 
-	m = Py_InitModule("iksemel", methods);
+	m = Py_InitModule("iksemel", NULL);
+
+	exceptions_setup(m);
+	Reference_setup();
+	Document_setup(m);
+
 	iksemel_module = m;
 }
