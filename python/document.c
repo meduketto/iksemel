@@ -104,6 +104,9 @@ static int Document_init(Document *self, PyObject *args, PyObject *kwargs);
 static PyObject *Document_str(Document *self);
 static PyObject *Document_iter(Document *self);
 static PyObject *Document_tags(Document *self, PyObject *args);
+static PyObject *Document_get(Document *self, PyObject *args);
+static PyObject *Document_set(Document *self, PyObject *args);
+static PyObject *Document_attributes(Document *self);
 static PyObject *Document_child(Document *self);
 static PyObject *Document_parent(Document *self);
 static PyObject *Document_root(Document *self);
@@ -114,6 +117,9 @@ static PyObject *Document_prev_tag(Document *self, PyObject *args);
 static void Document_dealloc(Document *self);
 
 static PyMethodDef Document_methods[] = {
+	{ "get", (PyCFunction) Document_get, METH_VARARGS, "Return value of the given attribute." },
+	{ "set", (PyCFunction) Document_set, METH_VARARGS, "Set value of the given attribute." },
+	{ "attributes", (PyCFunction) Document_attributes, METH_NOARGS, "Return tag attributes as a Python dictionary." },
 	{ "tags", (PyCFunction) Document_tags, METH_VARARGS, "Iterate over all or specified child tags" },
 	{ "child", (PyCFunction) Document_child, METH_NOARGS, "Return first child node." },
 	{ "parent", (PyCFunction) Document_parent, METH_NOARGS, "Return parent node." },
@@ -251,6 +257,71 @@ Document_tags(Document *self, PyObject *args)
 	iter->tagname = name;
 
 	return (PyObject *)iter;
+}
+
+static PyObject *
+Document_get(Document *self, PyObject *args)
+{
+	char *name;
+	char *val;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+// FIXME:
+//		PyErr_SetNone(NotTag);
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
+
+	val = iks_find_attrib(self->doc, name);
+	if (val) {
+		return Py_BuildValue("s", val);
+	}
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *
+Document_set(Document *self, PyObject *args)
+{
+	char *name;
+	char *value;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+// FIXME:
+//		PyErr_SetNone(NotTag);
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "sz", &name, &value))
+		return NULL;
+
+	iks_insert_attrib(self->doc, name, value);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *
+Document_attributes(Document *self)
+{
+	PyObject *attrs;
+	PyObject *val;
+	iks *x;
+	char *t;
+
+	attrs = PyDict_New();
+	if (!attrs) return NULL;
+
+	for (x = iks_attrib(self->doc); x; x = iks_next(x)) {
+		t = iks_cdata(x);
+		val = Py_BuildValue("s", t);
+		PyDict_SetItemString(attrs, iks_name(x), val);
+	}
+
+	return attrs;
 }
 
 static PyObject *
