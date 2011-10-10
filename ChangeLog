@@ -1,3 +1,6 @@
+2001-10-10  Gurer
+	* iks.c: iks_string() returns nul terminated strings for cdata nodes
+
 2001-10-07  Gurer
 	* sax.c: Fix handling of ending ]] sequences in CDATA sections
 	  bug report and patch by oscarvdbosch
