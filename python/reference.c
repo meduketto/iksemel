@@ -63,11 +63,13 @@ Reference_dealloc(Reference *self)
 void
 Reference_setup(void)
 {
-
+	Reference_type.tp_new = PyType_GenericNew;
+	if (PyType_Ready(&Reference_type) < 0) return;
+	Py_INCREF(&Reference_type);
 }
 
 PyObject *
 Reference_new(void)
 {
-	return PyObject_New(Reference, &Reference_type);
+	return (PyObject *) PyObject_New(Reference, &Reference_type);
 }

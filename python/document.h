@@ -8,8 +8,10 @@
 #define DOCUMENT_H 1
 
 #include <Python.h>
+#include "iksemel.h"
 
 void Document_setup(PyObject *module);
+PyObject *Document_from_iks(PyObject *ref, iks *doc);
 
 
 #endif  /* DOCUMENT_H */
