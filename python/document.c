@@ -103,7 +103,27 @@ typedef struct {
 static int Document_init(Document *self, PyObject *args, PyObject *kwargs);
 static PyObject *Document_str(Document *self);
 static PyObject *Document_iter(Document *self);
+static PyObject *Document_tags(Document *self, PyObject *args);
+static PyObject *Document_child(Document *self);
+static PyObject *Document_parent(Document *self);
+static PyObject *Document_root(Document *self);
+static PyObject *Document_next(Document *self);
+static PyObject *Document_next_tag(Document *self, PyObject *args);
+static PyObject *Document_prev(Document *self);
+static PyObject *Document_prev_tag(Document *self, PyObject *args);
 static void Document_dealloc(Document *self);
+
+static PyMethodDef Document_methods[] = {
+	{ "tags", (PyCFunction) Document_tags, METH_VARARGS, "Iterate over all or specified child tags" },
+	{ "child", (PyCFunction) Document_child, METH_NOARGS, "Return first child node." },
+	{ "parent", (PyCFunction) Document_parent, METH_NOARGS, "Return parent node." },
+	{ "root", (PyCFunction) Document_root, METH_NOARGS, "Return topmost node." },
+	{ "next", (PyCFunction) Document_next, METH_NOARGS, "Return next sibling node." },
+	{ "next_tag", (PyCFunction) Document_next_tag, METH_VARARGS, "Return next sibling tag node." },
+	{ "prev", (PyCFunction) Document_prev, METH_NOARGS, "Return previous sibling node." },
+	{ "prev_tag", (PyCFunction) Document_prev_tag, METH_VARARGS, "Return previous sibling tag node." },
+	{ NULL }
+};
 
 static PyTypeObject Document_type = {
 	PyObject_HEAD_INIT(NULL)
@@ -134,8 +154,7 @@ static PyTypeObject Document_type = {
 	0,			/* tp_weaklistoffset */
 	(getiterfunc) Document_iter, /* tp_iter */
 	0,			/* tp_iternext */
-0,
-//	Node_methods,		/* tp_methods */
+	Document_methods,	/* tp_methods */
 	0,			/* tp_members */
 	0,			/* tp_getset */
 	0,			/* tp_base */
@@ -204,6 +223,121 @@ Document_iter(Document *self)
 	iter->tagname = NULL;
 	return (PyObject *) iter;
 }
+
+static PyObject *
+Document_tags(Document *self, PyObject *args)
+{
+	Iter *iter;
+	char *name = NULL;
+
+	if (!PyArg_ParseTuple(args, "|s", &name))
+		return NULL;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+// FIXME: ?
+//		PyErr_SetNone(NotTag);
+		return NULL;
+	}
+
+	iter = PyObject_New(Iter, &Iter_type);
+	iter->ref = self->ref;
+	iter->doc = iks_first_tag(self->doc);
+	if (name && iter->doc) {
+		while (iter->doc && (strcmp(name, iks_name(iter->doc)) != 0)) {
+			iter->doc = iks_next_tag(iter->doc);
+		}
+	}
+	iter->tags = 1;
+	iter->tagname = name;
+
+	return (PyObject *)iter;
+}
+
+static PyObject *
+move_to(Document *self, iks *dest)
+{
+	if (dest) {
+		return Document_from_iks(self->ref, dest);
+	}
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *
+Document_child(Document *self)
+{
+	return move_to(self, iks_child(self->doc));
+}
+
+static PyObject *
+Document_parent(Document *self)
+{
+	return move_to(self, iks_parent(self->doc));
+}
+
+static PyObject *
+Document_root(Document *self)
+{
+	return move_to(self, iks_root(self->doc));
+}
+
+static PyObject *
+Document_next(Document *self)
+{
+	return move_to(self, iks_next(self->doc));
+}
+
+static PyObject *
+Document_next_tag(Document *self, PyObject *args)
+{
+	iks *x;
+	char *name = NULL;
+
+	if (!PyArg_ParseTuple(args, "|s", &name))
+		return NULL;
+
+	x = iks_next_tag (self->doc);
+	if (name) {
+		while (x && strcmp(iks_name(x), name) != 0) {
+			x = iks_next_tag (x);
+		}
+	}
+	return move_to(self, x);
+}
+
+static PyObject *
+Document_prev(Document *self)
+{
+	return move_to(self, iks_prev(self->doc));
+}
+
+static PyObject *
+Document_prev_tag(Document *self, PyObject *args)
+{
+	iks *x;
+	char *name = NULL;
+
+	if (!PyArg_ParseTuple(args, "|s", &name))
+		return NULL;
+
+	x = iks_prev_tag (self->doc);
+	if (name) {
+		while (x && strcmp(iks_name(x), name) != 0) {
+			x = iks_prev_tag (x);
+		}
+	}
+	return move_to(self, x);
+}
+
+
+
+
+
+
+
+
+
+
 
 static void
 Document_dealloc(Document *self)
