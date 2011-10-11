@@ -104,6 +104,10 @@ static int Document_init(Document *self, PyObject *args, PyObject *kwargs);
 static PyObject *Document_str(Document *self);
 static PyObject *Document_iter(Document *self);
 static PyObject *Document_tags(Document *self, PyObject *args);
+static PyObject *Document_is_tag(Document *self);
+static PyObject *Document_is_text(Document *self);
+static PyObject *Document_name(Document *self);
+static PyObject *Document_text(Document *self);
 static PyObject *Document_get(Document *self, PyObject *args);
 static PyObject *Document_set(Document *self, PyObject *args);
 static PyObject *Document_attributes(Document *self);
@@ -117,6 +121,10 @@ static PyObject *Document_prev_tag(Document *self, PyObject *args);
 static void Document_dealloc(Document *self);
 
 static PyMethodDef Document_methods[] = {
+	{ "is_tag", (PyCFunction) Document_is_tag, METH_NOARGS, "Return true if node is a tag node" },
+	{ "is_text", (PyCFunction) Document_is_text, METH_NOARGS, "Return true if node is a text node" },
+	{ "name", (PyCFunction) Document_name, METH_NOARGS, "Return tag name" },
+	{ "text", (PyCFunction) Document_text, METH_NOARGS, "Return text value" },
 	{ "get", (PyCFunction) Document_get, METH_VARARGS, "Return value of the given attribute." },
 	{ "set", (PyCFunction) Document_set, METH_VARARGS, "Set value of the given attribute." },
 	{ "attributes", (PyCFunction) Document_attributes, METH_NOARGS, "Return tag attributes as a Python dictionary." },
@@ -220,7 +228,10 @@ Document_iter(Document *self)
 {
 	Iter *iter;
 
-	// FIXME: tag error
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Cannot iterate over text nodes");
+		return NULL;
+	}
 
 	iter = PyObject_New(Iter, &Iter_type);
 	iter->doc = iks_child(self->doc);
@@ -236,14 +247,13 @@ Document_tags(Document *self, PyObject *args)
 	Iter *iter;
 	char *name = NULL;
 
-	if (!PyArg_ParseTuple(args, "|s", &name))
-		return NULL;
-
 	if (iks_type(self->doc) != IKS_TAG) {
-// FIXME: ?
-//		PyErr_SetNone(NotTag);
+		PyErr_SetString(PyExc_TypeError, "Cannot iterate over text nodes");
 		return NULL;
 	}
+
+	if (!PyArg_ParseTuple(args, "|s", &name))
+		return NULL;
 
 	iter = PyObject_New(Iter, &Iter_type);
 	iter->ref = self->ref;
@@ -260,14 +270,57 @@ Document_tags(Document *self, PyObject *args)
 }
 
 static PyObject *
+Document_is_tag(Document *self)
+{
+	if (iks_type(self->doc) == IKS_TAG) {
+		Py_INCREF(Py_True);
+		return Py_True;
+	} else {
+		Py_INCREF(Py_False);
+		return Py_False;
+	}
+}
+
+static PyObject *
+Document_is_text(Document *self)
+{
+	if (iks_type(self->doc) == IKS_CDATA) {
+		Py_INCREF(Py_True);
+		return Py_True;
+	} else {
+		Py_INCREF(Py_False);
+		return Py_False;
+	}
+}
+
+static PyObject *
+Document_name(Document *self)
+{
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Text nodes have no tag name");
+		return NULL;
+	}
+	return Py_BuildValue("s", iks_name(self->doc));
+}
+
+static PyObject *
+Document_text(Document *self)
+{
+	if (iks_type(self->doc) != IKS_CDATA) {
+		PyErr_SetString(PyExc_TypeError, "Tag nodes have no text content");
+		return NULL;
+	}
+	return Py_BuildValue("s", iks_cdata(self->doc));
+}
+
+static PyObject *
 Document_get(Document *self, PyObject *args)
 {
 	char *name;
 	char *val;
 
 	if (iks_type(self->doc) != IKS_TAG) {
-// FIXME:
-//		PyErr_SetNone(NotTag);
+		PyErr_SetString(PyExc_TypeError, "Text nodes cannot have attributes");
 		return NULL;
 	}
 
@@ -290,8 +343,7 @@ Document_set(Document *self, PyObject *args)
 	char *value;
 
 	if (iks_type(self->doc) != IKS_TAG) {
-// FIXME:
-//		PyErr_SetNone(NotTag);
+		PyErr_SetString(PyExc_TypeError, "Text nodes cannot have attributes");
 		return NULL;
 	}
 
@@ -311,6 +363,11 @@ Document_attributes(Document *self)
 	PyObject *val;
 	iks *x;
 	char *t;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Text nodes cannot have attributes");
+		return NULL;
+	}
 
 	attrs = PyDict_New();
 	if (!attrs) return NULL;
