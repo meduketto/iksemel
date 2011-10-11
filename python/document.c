@@ -120,6 +120,13 @@ static PyObject *Document_prev(Document *self);
 static PyObject *Document_prev_tag(Document *self, PyObject *args);
 static PyObject *Document_find(Document *self, PyObject *args);
 static PyObject *Document_find_text(Document *self, PyObject *args);
+static PyObject *Document_insert(Document *self, PyObject *args);
+static PyObject *Document_append(Document *self, PyObject *args);
+static PyObject *Document_prepend(Document *self, PyObject *args);
+static PyObject *Document_insert_text(Document *self, PyObject *args);
+static PyObject *Document_append_text(Document *self, PyObject *args);
+static PyObject *Document_prepend_text(Document *self, PyObject *args);
+static PyObject *Document_delete(Document *self);
 static void Document_dealloc(Document *self);
 
 static PyMethodDef Document_methods[] = {
@@ -140,6 +147,15 @@ static PyMethodDef Document_methods[] = {
 	{ "prev_tag", (PyCFunction) Document_prev_tag, METH_VARARGS, "Return previous sibling tag node." },
 	{ "find", (PyCFunction) Document_find, METH_VARARGS, "Find given tag among the children." },
 	{ "find_text", (PyCFunction) Document_find_text, METH_VARARGS, "Find given tag and return its text content." },
+// FIXME: these can accept other document objects as well
+	{ "insert", (PyCFunction) Document_insert, METH_VARARGS, "Insert a child tag with given name." },
+	{ "append", (PyCFunction) Document_append, METH_VARARGS, "Append a sibling tag with given name." },
+	{ "prepend", (PyCFunction) Document_prepend, METH_VARARGS, "Prepend a sibling tag with given name." },
+	{ "insert_text", (PyCFunction) Document_insert_text, METH_VARARGS, "Insert a child text node." },
+	{ "append_text", (PyCFunction) Document_append_text, METH_VARARGS, "Append a sibling text node." },
+	{ "prepend_text", (PyCFunction) Document_prepend_text, METH_VARARGS, "Prepend a sibling text node." },
+	{ "delete", (PyCFunction) Document_delete, METH_NOARGS, "Delete current node from document tree." },
+// FIXME: function to change or set text data
 	{ NULL }
 };
 
@@ -194,14 +210,20 @@ Document_init(Document *self, PyObject *args, PyObject *kwargs)
 	if (!PyArg_ParseTuple(args, "s", &str))
 		return -1;
 
-	self->doc = iks_tree(str, 0, &e);
-	if (!self->doc) {
-		if (e == IKS_NOMEM) {
-			PyErr_NoMemory();
-		} else {
-			exceptions_parse_error();
+	if (str[0] != '<') {
+		// Treat plain text as a tag name
+		self->doc = iks_new(str);
+	} else {
+		// otherwise treat it as an XML document
+		self->doc = iks_tree(str, 0, &e);
+		if (!self->doc) {
+			if (e == IKS_NOMEM) {
+				PyErr_NoMemory();
+			} else {
+				exceptions_parse_error();
+			}
+			return -1;
 		}
-		return -1;
 	}
 	self->ref = Reference_new();
 	if (!self->ref) {
@@ -311,6 +333,7 @@ static PyObject *
 Document_text(Document *self)
 {
 	if (iks_type(self->doc) != IKS_CDATA) {
+// FIXME: return child text node's text
 		PyErr_SetString(PyExc_TypeError, "Tag nodes have no text content");
 		return NULL;
 	}
@@ -496,6 +519,110 @@ Document_find_text(Document *self, PyObject *args)
 		return Py_BuildValue("s", text);
 	}
 
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *
+Document_insert(Document *self, PyObject *args)
+{
+	char *name;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Cannot insert tags into a text node");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
+
+	return move_to(self, iks_insert(self->doc, name));
+}
+
+static PyObject *
+Document_append(Document *self, PyObject *args)
+{
+	char *name;
+
+	if (iks_parent(self->doc) == NULL) {
+		PyErr_SetString(PyExc_TypeError, "Cannot append tags to the top level node, use insert");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
+
+	return move_to(self, iks_append(self->doc, name));
+}
+
+static PyObject *
+Document_prepend(Document *self, PyObject *args)
+{
+	char *name;
+
+	if (iks_parent(self->doc) == NULL) {
+		PyErr_SetString(PyExc_TypeError, "Cannot prepend tags to the top level node, use insert");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
+
+	return move_to(self, iks_prepend(self->doc, name));
+}
+
+static PyObject *
+Document_insert_text(Document *self, PyObject *args)
+{
+	char *text;
+
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Cannot insert text into a text node");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &text))
+		return NULL;
+
+	return move_to(self, iks_insert_cdata(self->doc, text, 0));
+}
+
+static PyObject *
+Document_append_text(Document *self, PyObject *args)
+{
+	char *text;
+
+	if (iks_parent(self->doc) == NULL) {
+		PyErr_SetString(PyExc_TypeError, "Cannot append to the top level node, use insert");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &text))
+		return NULL;
+
+	return move_to(self, iks_append_cdata(self->doc, text, 0));
+}
+
+static PyObject *
+Document_prepend_text(Document *self, PyObject *args)
+{
+	char *text;
+
+	if (iks_parent(self->doc) == NULL) {
+		PyErr_SetString(PyExc_TypeError, "Cannot prepend to the top level node, use insert");
+		return NULL;
+	}
+
+	if (!PyArg_ParseTuple(args, "s", &text))
+		return NULL;
+
+	return move_to(self, iks_prepend_cdata(self->doc, text, 0));
+}
+
+static PyObject *
+Document_delete(Document *self)
+{
+	iks_hide(self->doc);
 	Py_INCREF(Py_None);
 	return Py_None;
 }
