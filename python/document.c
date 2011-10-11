@@ -118,6 +118,8 @@ static PyObject *Document_next(Document *self);
 static PyObject *Document_next_tag(Document *self, PyObject *args);
 static PyObject *Document_prev(Document *self);
 static PyObject *Document_prev_tag(Document *self, PyObject *args);
+static PyObject *Document_find(Document *self, PyObject *args);
+static PyObject *Document_find_text(Document *self, PyObject *args);
 static void Document_dealloc(Document *self);
 
 static PyMethodDef Document_methods[] = {
@@ -136,6 +138,8 @@ static PyMethodDef Document_methods[] = {
 	{ "next_tag", (PyCFunction) Document_next_tag, METH_VARARGS, "Return next sibling tag node." },
 	{ "prev", (PyCFunction) Document_prev, METH_NOARGS, "Return previous sibling node." },
 	{ "prev_tag", (PyCFunction) Document_prev_tag, METH_VARARGS, "Return previous sibling tag node." },
+	{ "find", (PyCFunction) Document_find, METH_VARARGS, "Find given tag among the children." },
+	{ "find_text", (PyCFunction) Document_find_text, METH_VARARGS, "Find given tag and return its text content." },
 	{ NULL }
 };
 
@@ -457,15 +461,44 @@ Document_prev_tag(Document *self, PyObject *args)
 	return move_to(self, x);
 }
 
+static PyObject *
+Document_find(Document *self, PyObject *args)
+{
+	char *name;
 
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Text nodes have no children");
+		return NULL;
+	}
 
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
 
+	return move_to(self, iks_find(self->doc, name));
+}
 
+static PyObject *
+Document_find_text(Document *self, PyObject *args)
+{
+	char *name;
+	char *text;
 
+	if (iks_type(self->doc) != IKS_TAG) {
+		PyErr_SetString(PyExc_TypeError, "Text nodes have no children");
+		return NULL;
+	}
 
+	if (!PyArg_ParseTuple(args, "s", &name))
+		return NULL;
 
+	text = iks_find_cdata(self->doc, name);
+	if (text) {
+		return Py_BuildValue("s", text);
+	}
 
-
+	Py_INCREF(Py_None);
+	return Py_None;
+}
 
 static void
 Document_dealloc(Document *self)
