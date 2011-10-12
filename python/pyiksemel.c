@@ -7,6 +7,7 @@
 #include "exceptions.h"
 #include "reference.h"
 #include "document.h"
+#include "stream.h"
 #include "iksemel.h"
 
 PyObject *iksemel_module;
@@ -21,6 +22,7 @@ initiksemel(void)
 	exceptions_setup(m);
 	Reference_setup();
 	Document_setup(m);
+	Stream_setup(m);
 
 	iksemel_module = m;
 }
