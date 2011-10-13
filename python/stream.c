@@ -4,6 +4,7 @@
 ** modify it under the terms of GNU Lesser General Public License.
 */
 
+#include "document.h"
 #include "stream.h"
 
 typedef struct {
@@ -12,7 +13,13 @@ typedef struct {
 } Stream;
 
 static int Stream_init(Stream *self, PyObject *args, PyObject *kwargs);
+static PyObject *Stream_connect(Stream *self, PyObject *args, PyObject *kwargs);
 static void Stream_dealloc(Stream *self);
+
+static PyMethodDef Stream_methods[] = {
+	{ "connect", (PyCFunction) Stream_connect, METH_KEYWORDS, "Connect stream to an XMPP server" },
+	{ NULL }
+};
 
 static PyTypeObject Stream_type = {
 	PyObject_HEAD_INIT(NULL)
@@ -43,7 +50,7 @@ static PyTypeObject Stream_type = {
 	0,			/* tp_weaklistoffset */
 	0,			/* tp_iter */
 	0,			/* tp_iternext */
-	0,			/* tp_methods */
+	Stream_methods,		/* tp_methods */
 	0,			/* tp_members */
 	0,			/* tp_getset */
 	0,			/* tp_base */
@@ -57,8 +64,30 @@ static PyTypeObject Stream_type = {
 };
 
 static int
-on_stream (Stream *self, int type, iks *node)
+on_stream(Stream *self, int type, iks *node)
 {
+	PyObject *hook;
+	PyObject *doc;
+	PyObject *ret;
+
+	// FIXME: handle different types
+
+	hook = PyObject_GetAttrString((PyObject *) self, "on_stanza");
+	if (hook) {
+		doc = Document_from_iks(NULL, node);
+		if (!doc) {
+			Py_DECREF(hook);
+			return IKS_NOMEM;
+		}
+		ret = PyObject_CallFunctionObjArgs(hook, doc, NULL);
+		Py_DECREF(hook);
+		// FIXME: handle error
+		if (ret == NULL) {
+			Py_DECREF(ret);
+			return IKS_HOOK;
+		}
+	}
+	return IKS_OK;
 }
 
 static int
@@ -72,9 +101,20 @@ Stream_init(Stream *self, PyObject *args, PyObject *kwargs)
 	return 0;
 }
 
+static PyObject *
+Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
+{
+	// FIXME: simple test for now, should initiate connection instead
+	on_stream(self,0,iks_new("lala"));
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 static void
 Stream_dealloc(Stream *self)
 {
+	iks_parser_delete(self->parser);
 	self->ob_type->tp_free((PyObject *) self);
 }
 
