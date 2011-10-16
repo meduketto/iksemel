@@ -7,6 +7,7 @@
 #include "exceptions.h"
 #include "reference.h"
 #include "document.h"
+#include "jid.h"
 #include "stream.h"
 #include "iksemel.h"
 
@@ -22,6 +23,7 @@ initiksemel(void)
 	exceptions_setup(m);
 	Reference_setup();
 	Document_setup(m);
+	JID_setup(m);
 	Stream_setup(m);
 
 	iksemel_module = m;
