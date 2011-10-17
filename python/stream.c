@@ -4,6 +4,7 @@
 ** modify it under the terms of GNU Lesser General Public License.
 */
 
+#include "exceptions.h"
 #include "document.h"
 #include "stream.h"
 
@@ -19,11 +20,15 @@ typedef struct {
 
 static int Stream_init(Stream *self, PyObject *args, PyObject *kwargs);
 static PyObject *Stream_connect(Stream *self, PyObject *args, PyObject *kwargs);
+static PyObject *Stream_fileno(Stream *self);
+static PyObject *Stream_send(Stream *self, PyObject *args);
 static PyObject *Stream_recv(Stream *self);
 static void Stream_dealloc(Stream *self);
 
 static PyMethodDef Stream_methods[] = {
 	{ "connect", (PyCFunction) Stream_connect, METH_KEYWORDS, "Connect stream to an XMPP server" },
+	{ "fileno", (PyCFunction) Stream_fileno, METH_NOARGS, "Return file descriptor of the socket" },
+	{ "send", (PyCFunction) Stream_send, METH_VARARGS, "Send stanzas to server" },
 	{ "recv", (PyCFunction) Stream_recv, METH_NOARGS, "Read data from server" },
 	{ NULL }
 };
@@ -76,7 +81,7 @@ on_stream(Stream *self, int type, iks *node)
 	PyObject *hook;
 	PyObject *doc;
 	PyObject *ret;
-	iks *x;
+//	iks *x;
 
 	switch (type) {
 #if 0
@@ -201,6 +206,7 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 			self->use_tls = 0;
 		}
 	}
+	PyErr_Clear();
 
 	o = PyMapping_GetItemString(kwargs, "sasl");
 	if (o) {
@@ -210,10 +216,11 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 			self->use_sasl = 0;
 		}
 	}
+	PyErr_Clear();
 
 	o = PyMapping_GetItemString(kwargs, "jid");
 	if (!o) {
-		// FIXME: except
+		PyErr_SetString(PyExc_TypeError, "jid keyword argument is required");
 		return NULL;
 	}
 	Py_INCREF(o);
@@ -229,11 +236,43 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 
 	e = iks_connect_tcp(self->parser, host, IKS_JABBER_PORT);
 	if (e) {
-		// FIXME: throw exception
-		return NULL;
+		return exceptions_stream_error(e);
 	}
 
 	Py_DECREF(o);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *
+Stream_fileno(Stream *self)
+{
+	return Py_BuildValue("i", iks_fd(self->parser));
+}
+
+static PyObject *
+Stream_send(Stream *self, PyObject *args)
+{
+	int e;
+	PyObject *s;
+	char *str;
+
+	if (!PyArg_ParseTuple(args, "O", &s))
+		return NULL;
+
+	s = PyObject_Str(s);
+	if (s) {
+		str = PyString_AsString(s);
+		if (str) {
+			e = iks_send_raw(self->parser, str);
+			if (e) {
+				Py_DECREF(s);
+				return exceptions_stream_error(e);
+			}
+		}
+		Py_DECREF(s);
+	}
 
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -246,8 +285,7 @@ Stream_recv(Stream *self)
 
 	e = iks_recv(self->parser, 0);
 	if (e) {
-		// FIXME: throw exception
-		return NULL;
+		return exceptions_stream_error(e);
 	}
 
 	Py_INCREF(Py_None);

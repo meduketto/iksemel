@@ -11,6 +11,7 @@
 
 void exceptions_setup(PyObject *module);
 PyObject *exceptions_parse_error(void);
+PyObject *exceptions_stream_error(int e);
 
 
 #endif  /* EXCEPTIONS_H */
