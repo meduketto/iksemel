@@ -139,9 +139,33 @@ on_stream(Stream *self, int type, iks *node)
 	return IKS_OK;
 }
 
+void
+on_log(Stream *self, const char *data, size_t size, int is_incoming)
+{
+	PyObject *hook;
+	PyObject *args;
+	PyObject *ret;
+	PyObject *b;
+
+	hook = PyObject_GetAttrString((PyObject *) self, "on_xml");
+	if (hook) {
+		b = Py_False;
+		if (is_incoming) b = Py_True;
+		args = Py_BuildValue("s#O", data, size, b);
+		if (args) {
+			ret = PyObject_CallObject(hook, args);
+			if (ret) { Py_DECREF(ret); }
+			Py_DECREF(args);
+		}
+		Py_DECREF(hook);
+	}
+}
+
 static int
 Stream_init(Stream *self, PyObject *args, PyObject *kwargs)
 {
+	PyObject *hook;
+
 	self->jid = NULL;
 	self->parser = iks_stream_new (
 		IKS_NS_CLIENT,
@@ -152,6 +176,13 @@ Stream_init(Stream *self, PyObject *args, PyObject *kwargs)
 	self->authorized = 0;
 	self->use_sasl = 1;
 	self->use_tls = 1;
+
+	hook = PyObject_GetAttrString((PyObject *) self, "on_xml");
+	if (hook) {
+		iks_set_log_hook(self->parser, (iksLogHook *) on_log);
+		Py_DECREF(hook);
+	}
+
 	return 0;
 }
 
