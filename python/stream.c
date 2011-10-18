@@ -117,6 +117,34 @@ start_sasl(Stream *self, enum ikssasltype type)
 }
 
 static void
+make_bind(Stream *self)
+{
+	iks *x, *y, *z;
+	PyObject *o;
+	char *resource;
+
+	o = PyObject_GetAttrString(self->jid, "resource");
+	if (!o) return;
+	resource = PyString_AsString(o);
+	if (!resource) {
+		PyErr_Clear();
+		resource = "iksemel";
+	}
+
+	x = iks_new("iq");
+	iks_insert_attrib(x, "type", "set");
+	y = iks_insert(x, "bind");
+	iks_insert_attrib(y, "xmlns", IKS_NS_XMPP_BIND);
+	z = iks_insert(y, "resource");
+	iks_insert_cdata(z, resource, 0);
+
+	iks_send(self->parser, x);
+
+	iks_delete(x);
+	Py_DECREF(o);
+}
+
+static void
 on_features(Stream *self, iks *node)
 {
 	iks *x;
@@ -125,13 +153,9 @@ on_features(Stream *self, iks *node)
 	if (self->use_sasl) {
 		if (self->use_tls && !iks_is_secure(self->parser)) return;
 		if (self->authorized) {
-#if 0
 			if (self->features & IKS_STREAM_BIND) {
-				x = iks_make_resource_bind(sess->acc);
-				iks_send(self->parser, x);
-				iks_delete(x);
+				make_bind(self);
 			}
-#endif
 			if (self->features & IKS_STREAM_SESSION) {
 				x = iks_make_session();
 				iks_insert_attrib(x, "id", "auth");
@@ -147,6 +171,26 @@ on_features(Stream *self, iks *node)
 	}
 }
 
+static void
+on_success(Stream *self, iks *node)
+{
+	PyObject *o;
+	char *domain;
+
+	o = PyObject_GetAttrString(self->jid, "domain");
+	if (!o) return;
+	domain = PyString_AsString(o);
+	if (!domain) {
+		Py_DECREF(o);
+		return;
+	}
+
+	self->authorized = 1;
+	iks_send_header(self->parser, domain);
+
+	Py_DECREF(o);
+}
+
 static int
 on_stream(Stream *self, int type, iks *node)
 {
@@ -159,6 +203,8 @@ on_stream(Stream *self, int type, iks *node)
 		case IKS_NODE_NORMAL:
 			if (strcmp("stream:features", iks_name(node)) == 0) {
 				on_features(self, node);
+			} else if (strcmp("success", iks_name(node)) == 0) {
+				on_success(self, node);
 			}
 #if 0
 		case IKS_NODE_START:

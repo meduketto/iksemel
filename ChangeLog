@@ -1,7 +1,10 @@
-2001-10-10  Gurer
+2011-10-18  Gurer
+	* python/: Python bindings and test scripts
+
+2011-10-10  Gurer
 	* iks.c: iks_string() returns nul terminated strings for cdata nodes
 
-2001-10-07  Gurer
+2011-10-07  Gurer
 	* sax.c: Fix handling of ending ]] sequences in CDATA sections
 	  bug report and patch by oscarvdbosch
 	* tst-sax.c: Test coverage for fixed bug

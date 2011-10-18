@@ -1,7 +1,6 @@
 
 ==> 1.5 release, abi/api compatible, will be released in a few months
 
-* integrate python binding from pardus into the main tree
 * parser: &#1234; and &#xA25F; like entities must be unescaped.
 
 

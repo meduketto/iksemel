@@ -24,6 +24,8 @@ versions.
 
 TLS support requires OpenSSL (>0.9.8) or GNUTLS (>2.0.0) library.
 
+Python bindings requires Python (>2.2).
+
 
 Compiling & Install:
 --------------------
