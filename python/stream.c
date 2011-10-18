@@ -75,6 +75,78 @@ static PyTypeObject Stream_type = {
 	0			/* tp_new */
 };
 
+static void
+start_sasl(Stream *self, enum ikssasltype type)
+{
+	PyObject *hook;
+	PyObject *ret;
+	PyObject *o;
+	char *local;
+	char *pw;
+
+	o = PyObject_GetAttrString(self->jid, "local");
+	if (!o) return;
+	local = PyString_AsString(o);
+	if (!local) {
+		Py_DECREF(o);
+		return;
+	}
+
+	hook = PyObject_GetAttrString((PyObject *) self, "ask_password");
+	if (!hook) {
+		Py_DECREF(o);
+		return;
+	}
+	ret = PyObject_CallObject(hook, NULL);
+	Py_DECREF(hook);
+	if (!ret) {
+		Py_DECREF(o);
+		return;
+	}
+	pw = PyString_AsString(ret);
+	if (!pw) {
+		Py_DECREF(ret);
+		Py_DECREF(o);
+		return;
+	}
+
+	iks_start_sasl(self->parser, type, local, pw);
+
+	Py_DECREF(ret);
+	Py_DECREF(o);
+}
+
+static void
+on_features(Stream *self, iks *node)
+{
+	iks *x;
+
+	self->features = iks_stream_features(node);
+	if (self->use_sasl) {
+		if (self->use_tls && !iks_is_secure(self->parser)) return;
+		if (self->authorized) {
+#if 0
+			if (self->features & IKS_STREAM_BIND) {
+				x = iks_make_resource_bind(sess->acc);
+				iks_send(self->parser, x);
+				iks_delete(x);
+			}
+#endif
+			if (self->features & IKS_STREAM_SESSION) {
+				x = iks_make_session();
+				iks_insert_attrib(x, "id", "auth");
+				iks_send(self->parser, x);
+				iks_delete(x);
+			}
+		} else {
+			if (self->features & IKS_STREAM_SASL_MD5)
+				start_sasl(self, IKS_SASL_DIGEST_MD5);
+			else if (self->features & IKS_STREAM_SASL_PLAIN)
+				start_sasl(self, IKS_SASL_PLAIN);
+		}
+	}
+}
+
 static int
 on_stream(Stream *self, int type, iks *node)
 {
@@ -84,6 +156,10 @@ on_stream(Stream *self, int type, iks *node)
 //	iks *x;
 
 	switch (type) {
+		case IKS_NODE_NORMAL:
+			if (strcmp("stream:features", iks_name(node)) == 0) {
+				on_features(self, node);
+			}
 #if 0
 		case IKS_NODE_START:
 			if (!iks_is_secure(self->parser)) {
@@ -97,33 +173,7 @@ on_stream(Stream *self, int type, iks *node)
 				iks_delete (x);
 			}
 			break;
-		case IKS_NODE_NORMAL:
-			if (strcmp ("stream:features", iks_name (node)) == 0) {
-				self->features = iks_stream_features (node);
-				if (self->use_sasl) {
-					if (self->use_tls && !iks_is_secure (self->parser)) break;
-					if (self->authorized) {
-						iks *t;
-						if (self->features & IKS_STREAM_BIND) {
-							t = iks_make_resource_bind (sess->acc);
-							iks_send (self->parser, t);
-							iks_delete (t);
-						}
-						if (self->features & IKS_STREAM_SESSION) {
-							t = iks_make_session ();
-							iks_insert_attrib (t, "id", "auth");
-							iks_send (self->parser, t);
-							iks_delete (t);
-						}
-					} else {
-						if (self->features & IKS_STREAM_SASL_MD5)
-							iks_start_sasl (self->prs, IKS_SASL_DIGEST_MD5, sess->acc->user, sess->pass);
-						else if (self->features & IKS_STREAM_SASL_PLAIN)
-							iks_start_sasl (self->prs, IKS_SASL_PLAIN, sess->acc->user, sess->pass);
-					}
-				}
 #endif
-		case IKS_NODE_NORMAL:
 	hook = PyObject_GetAttrString((PyObject *) self, "on_stanza");
 	if (hook) {
 		doc = Document_from_iks(NULL, node);
