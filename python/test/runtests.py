@@ -8,7 +8,7 @@ import subprocess
 def runtests():
     fail = 0
     for test in os.listdir("."):
-        if test.endswith(".py") and test != "runtests.py":
+        if test.startswith("tst_") and test.endswith(".py"):
             if 0 != subprocess.call(["./" + test]):
                 fail += 1
                 print test,  "failed!"
