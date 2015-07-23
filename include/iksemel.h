@@ -291,6 +291,7 @@ int iks_start_sasl (iksparser *prs, enum ikssasltype type, char *username, char 
 #define IKS_STREAM_BIND                       4
 #define IKS_STREAM_SASL_PLAIN                 8
 #define IKS_STREAM_SASL_MD5                  16
+#define IKS_STREAM_STARTTLS_REQUIRED         32
 
 typedef struct iksid_struct {
 	char *user;
