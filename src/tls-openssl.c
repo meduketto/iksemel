@@ -64,6 +64,13 @@ my_bio_write (BIO *b, const char *buf, int len)
 	if (buf == NULL || len <= 0 || data == NULL) return 0;
 
 	ret = data->trans->send (data->sock, buf, len);
+	if (ret==IKS_OK) {
+        ret = len;
+	}
+	else {
+        ret = -1;
+	}
+
 	BIO_clear_retry_flags (b);
 	return ret;
 }
@@ -121,11 +128,14 @@ tls_handshake (struct ikstls_data **datap, ikstransport *trans, void *sock)
 		init_done = 1;
 	}
 
-	data->ctx = SSL_CTX_new (SSLv23_client_method ());
+	data->ctx = SSL_CTX_new (SSLv23_method());
 	if (!data->ctx) {
 		iks_free (data);
 		return IKS_NOMEM;
 	}
+
+  // disable weak SSLv2 and SSLv3 protocols //
+  SSL_CTX_set_options(data->ctx, SSL_OP_ALL|SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
 
 	data->ssl = SSL_new (data->ctx);
 	if (!data->ssl) {
@@ -154,6 +164,10 @@ tls_send (struct ikstls_data *data, const char *buf, size_t size)
 	int r;
 
 	r = SSL_write (data->ssl, buf, size);
+  if (r == size) {
+    	return IKS_OK;
+  }
+
 	switch (SSL_get_error(data->ssl, r)) {
 		case SSL_ERROR_NONE:
 			return IKS_OK;
@@ -169,11 +183,15 @@ tls_recv (struct ikstls_data *data, char *buf, size_t size, int timeout)
 
 	data->timeout = timeout;
 	r = SSL_read (data->ssl, buf, size);
+  if (r >= 0) {
+    	return r;
+  }
+
 	switch (SSL_get_error(data->ssl, r)) {
 		case SSL_ERROR_NONE:
-			return IKS_OK;
+			return 0;
 		default:
-			return IKS_NET_RWERR;
+			return -1;
 	}
 }
 
