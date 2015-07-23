@@ -313,16 +313,17 @@ iks_sasl_mechanisms (iks *x)
 static int
 iks_starttls_options (iks *x)
 {
-        int options = IKS_STREAM_STARTTLS;
+	int options = IKS_STREAM_STARTTLS;
 
-        while (x) {
-                if (!iks_strcmp(iks_name(x), "required")) {
-                        options |= IKS_STREAM_STARTTLS_REQUIRED;
-                }
-                x = iks_next_tag(x);
-        }
+	while (x) {
+		if (!iks_strcmp(iks_name(x), "required")) {
+			options |= IKS_STREAM_STARTTLS_REQUIRED;
+		}
 
-        return options;
+		x = iks_next_tag(x);
+	}
+
+	return options;
 }
 
 int
@@ -335,9 +336,7 @@ iks_stream_features (iks *x)
 	for (x = iks_child(x); x; x = iks_next_tag(x)) {
 		if (!iks_strcmp(iks_name(x), "starttls")) {
 			features |= iks_starttls_options(iks_child(x));
-    } else if (!iks_strcmp(iks_name(x), "starttls"))
-			features |= IKS_STREAM_STARTTLS;
-		else if (!iks_strcmp(iks_name(x), "bind"))
+		} else if (!iks_strcmp(iks_name(x), "bind"))
 			features |= IKS_STREAM_BIND;
 		else if (!iks_strcmp(iks_name(x), "session"))
 			features |= IKS_STREAM_SESSION;
