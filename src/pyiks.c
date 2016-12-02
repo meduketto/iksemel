@@ -44,7 +44,6 @@ static void Document_dealloc(Document *self);
 
 static PyTypeObject Document_type = {
 	PyVarObject_HEAD_0INIT(NULL,0)
-		
 	"piksemel.Document",	/* tp_name */
 	sizeof(Document),	/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -264,6 +263,7 @@ static void
 Document_dealloc(Document *self)
 {
 	if (self->document) iks_delete(self->document);
+	#ERROR:I should fix here
 	self->ob_type->tp_free((PyObject *)self);
 }
 
@@ -342,6 +342,7 @@ Node_dealloc(Node *self)
 	if (self->doc) {
 		Py_DECREF(self->doc);
 	}
+	#THERE ARE ERROR IN HERE: Thıs error the same as 268. blocks problem
 	self->ob_type->tp_free((PyObject *)self);
 }
 
@@ -993,6 +994,7 @@ static PyMethodDef methods[] = {
 };
 
 __attribute__((visibility("default")))
+	#I should rewrite Modul Initialization
 PyMODINIT_FUNC
 initpiksemel(void)
 {
