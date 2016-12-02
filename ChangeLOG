@@ -1,21 +1,10 @@
 2016-11-30:  
-    *Bazı hatalar düzeltildi.
-    *Uzun aradan sonra epey bir düzenleme yaptım. 
-    *267 ve 345 numaralı satırlar düzeltilmeli
-    *PyModule_Init düzeltilmeli
+    *Fixed some errors(Bazı hatalar düzeltildi.)
+    *After a long time I make a lot of changes (Uzun aradan sonra epey bir düzenleme yaptım.) 
+    *I should fix 268. and 346. lines (268 ve 346 numaralı satırları düzeltmeliyim)
+    *rewrite module initialization(modül initlenmesi düzeltilmeli)
     
 2016-10-14
-    *İnceleme sonucunda 2-3 satırlık bir değişim yapıldı.
-    *pyiks dosyası yazılmaya başlandı.
-    *tests klasörü ve setup.py klasörü yazılacak.
-
-2016-10-13:
-    *src klasoründeki C-Based kodlar incelenmeye başladı.
-
-2016-10-12:
-    *Mevcut yapı incelenmeye başladı.
-
-2016-10-11:
-    *Lupus projesi kapsamında ilk inceleme başlatıldı.
-    *Mevcut projeler incelendi en uygun oanının Piksemel olduğuna karar verildi.
-    
+    *Start review pyiks.c(pyiks dosyası yeniden yazılmaya başlandı.)
+    *I will rewrite tests and setup.py(tests klasörü ve setup.py klasörü yazılacak.)
+   
