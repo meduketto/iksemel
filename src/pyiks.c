@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 2005-2008 TUBITAK/UEKAE
+** Copyright (c) 2016 Aquila NIPALENSIS
 **
 ** This program is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU General Public License as published by the
