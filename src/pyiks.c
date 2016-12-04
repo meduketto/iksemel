@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 2016-2017 Aquila NİPALENSİS
+** Copyright (c) 2005-2008 TUBITAK/UEKAE
 **
 ** This program is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU General Public License as published by the
@@ -7,7 +7,7 @@
 ** option) any later version. Please read the COPYING file.
 */
 
-#include <Python.h>
+#include <python3.5m/Python.h>
 #include "iksemel.h"
 
 PyObject *piksemel_module;
@@ -43,7 +43,7 @@ typedef struct {
 static void Document_dealloc(Document *self);
 
 static PyTypeObject Document_type = {
-	PyVarObject_HEAD_0INIT(NULL,0)
+	PyVarObject_HEAD_INIT(NULL,0)
 	"piksemel.Document",	/* tp_name */
 	sizeof(Document),	/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -80,14 +80,14 @@ static PyTypeObject Document_type = {
 	0,			/* tp_dictoffset */
 	0,			/* tp_init */
 	0,			/* tp_alloc */
-	0,			/* tp_new */
+	0			/* tp_new */
 };
 
 static PyObject *Iter_iter(Iter *self);
 static PyObject *Iter_next(Iter *self);
 
 static PyTypeObject Iter_type = {
-	PyVarObject_HEAD_INIT(NULL,0)	
+	PyVarObject_HEAD_INIT(NULL,0)
 	"piksemel.Iter",	/* tp_name */
 	sizeof(Iter),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -124,7 +124,7 @@ static PyTypeObject Iter_type = {
 	0,			/* tp_dictoffset */
 	0,			/* tp_init */
 	0,			/* tp_alloc */
-	0,			/* tp_new */
+	0			/* tp_new */
 };
 
 static void Node_dealloc(Node *self);
@@ -256,15 +256,14 @@ static PyTypeObject Node_type = {
 	0,			/* tp_dictoffset */
 	0,			/* tp_init */
 	0,			/* tp_alloc */
-	0,			/* tp_new */
+	0			/* tp_new */
 };
 
 static void
 Document_dealloc(Document *self)
 {
 	if (self->document) iks_delete(self->document);
-	#ERROR:I should fix here
-	self->ob_type->tp_free((PyObject *)self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 static PyObject *
@@ -342,8 +341,7 @@ Node_dealloc(Node *self)
 	if (self->doc) {
 		Py_DECREF(self->doc);
 	}
-	#THERE ARE ERROR IN HERE: Thıs error the same as 268. blocks problem
-	self->ob_type->tp_free((PyObject *)self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 static PyObject *
@@ -992,15 +990,21 @@ static PyMethodDef methods[] = {
 	  "Create a new document with given root tag name."},
 	{ NULL, NULL, 0, NULL }
 };
+static struct PyModuleDef piksemelmodule ={
+	PyModuleDef_HEAD_INIT,
+	"piksemel",
+	NULL,
+	-1,
+	methods
+};		
 
 __attribute__((visibility("default")))
-	#I should rewrite Modul Initialization
-PyMODINIT_FUNC
-initpiksemel(void)
+PyMODINIT_FUNC 
+PyInit_piksemel(void)
 {
 	PyObject *m;
 
-	m = Py_InitModule("piksemel", methods);
+	m = PyModule_Create(&piksemelmodule);
 	/* constants */
 	PyModule_AddIntConstant(m, "TAG", IKS_TAG);
 	PyModule_AddIntConstant(m, "ATTRIBUTE", IKS_ATTRIBUTE);
