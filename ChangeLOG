@@ -1,3 +1,7 @@
+2016-12-04:
+    *I rewrite pyiks.c but there are a lot of runtime error. Thats should fix.
+    *I upload tests folder.
+    
 2016-11-30:  
     *Fixed some errors(Bazı hatalar düzeltildi.)
     *After a long time I make a lot of changes (Uzun aradan sonra epey bir düzenleme yaptım.) 
