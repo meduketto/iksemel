@@ -10,7 +10,7 @@ You dont need anything other than an installed Python framework.
 iksemel-lite source is included and compiled built-in to the module.
 
 To compile and install: 
-# ./setup.py install 
+python3 setup.py install 
 then you can import the piksemel module in your python programs.
 
 
