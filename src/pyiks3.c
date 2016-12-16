@@ -40,6 +40,7 @@ typedef struct {
 	char *tagname;
 } Iter;
 
+/*** Document ***/
 static void
 Document_dealloc(Document *self)
 {
@@ -87,6 +88,8 @@ static PyTypeObject Document_type = {
 	0,			/* tp_alloc */
 	0			/* tp_new */
 };
+
+/*** Iterator ***/
 
 static PyObject *
 Iter_iter(Iter *self)
@@ -158,6 +161,29 @@ static PyTypeObject Iter_type = {
 	0			/* tp_new */
 };
 
+/*** Nodes ***/
+static PyObject *
+new_node(Document *doc, iks *xml)
+{
+	Node *node;
+	int ref = 1;
+
+	if (!xml) return PyErr_NoMemory();
+
+	if (!doc) {
+		doc = PyObject_New(Document, &Document_type);
+		doc->document = xml;
+		ref = 0;
+	}
+	node = PyObject_New(Node, &Node_type);
+	node->doc = doc;
+	if (ref) {
+		Py_INCREF(doc);
+	}
+	node->node = xml;
+	return (PyObject *)node;
+}
+
 static void
 Node_dealloc(Node *self)
 {
@@ -166,6 +192,20 @@ Node_dealloc(Node *self)
 	}
 	PyTypeObject* ob_type(PyObject *self);
 }
+
+static PyObject *
+Node_toString(Node *self, PyObject *args)
+{
+	PyObject *ret;
+	char *str;
+
+	str = iks_string(NULL, self->node);
+	ret = Py_BuildValue("s", str);
+	iks_free(str);
+
+	return ret;
+}
+
 static PyObject *
 Node_iter(Node *self)
 {
@@ -527,19 +567,6 @@ Node_previousTag(Node *self, PyObject *args)
 	return new_node(self->doc, sibling);
 }
 
-static PyObject *
-Node_toString(Node *self, PyObject *args)
-{
-	PyObject *ret;
-	char *str;
-
-	str = iks_string(NULL, self->node);
-	ret = Py_BuildValue("s", str);
-	iks_free(str);
-
-	return ret;
-}
-
 struct makeup_ctx {
 	unsigned int level;
 	int can_indent;
@@ -857,28 +884,6 @@ static PyTypeObject Node_type = {
 	0,			/* tp_alloc */
 	0			/* tp_new */
 };
-
-static PyObject *
-new_node(Document *doc, iks *xml)
-{
-	Node *node;
-	int ref = 1;
-
-	if (!xml) return PyErr_NoMemory();
-
-	if (!doc) {
-		doc = PyObject_New(Document, &Document_type);
-		doc->document = xml;
-		ref = 0;
-	}
-	node = PyObject_New(Node, &Node_type);
-	node->doc = doc;
-	if (ref) {
-		Py_INCREF(doc);
-	}
-	node->node = xml;
-	return (PyObject *)node;
-}
 
 /*** Module Functions ***/
 
