@@ -40,8 +40,15 @@ typedef struct {
 	char *tagname;
 } Iter;
 
-static void Document_dealloc(Document *self);
+/*** Document Dealloc ***/
+static void
+Document_dealloc(Document *self)
+{
+	if (self->document) iks_delete(self->document);
+	PyTypeObject* ob_type(PyObject *self);
+}
 
+/*** Document Objects ***/
 static PyTypeObject Document_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
 	"piksemel.Document",	/* tp_name */
@@ -83,8 +90,38 @@ static PyTypeObject Document_type = {
 	0			/* tp_new */
 };
 
-static PyObject *Iter_iter(Iter *self);
-static PyObject *Iter_next(Iter *self);
+/*** Iterators ***/
+
+static PyObject *
+Iter_iter(Iter *self)
+{
+	Py_INCREF(self);
+	return (PyObject *)self;
+}
+
+static PyObject *
+Iter_next(Iter *self)
+{
+	iks *node;
+
+	node = self->node;
+	if (!node) return NULL;
+
+	if (self->tags) {
+		self->node = iks_next_tag(node);
+		if (self->node && self->tagname) {
+			while (self->node && (strcmp(self->tagname, iks_name(self->node)) != 0)) {
+				self->node = iks_next_tag(self->node);
+			}
+		}
+	} else {
+		self->node = iks_next(node);
+	}
+
+	return new_node(self->doc, node);
+}
+
+/*** Iterator Objects ***/
 
 static PyTypeObject Iter_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
@@ -127,194 +164,15 @@ static PyTypeObject Iter_type = {
 	0			/* tp_new */
 };
 
-static void Node_dealloc(Node *self);
-static PyObject *Node_iter(Node *self);
-static PyObject *Node_type_func(Node *self);
-static PyObject *Node_reduce(Node *self, PyObject *args);
-static PyObject *Node_data(Node *self);
-static PyObject *Node_name(Node *self);
-static PyObject *Node_attributes(Node *self, PyObject *args);
-static PyObject *Node_getAttribute(Node *self, PyObject *args);
-static PyObject *Node_setAttribute(Node *self, PyObject *args);
-static PyObject *Node_getTag(Node *self, PyObject *args);
-static PyObject *Node_getTagData(Node *self, PyObject *args);
-static PyObject *Node_tags(Node *self, PyObject *args);
-static PyObject *Node_firstChild(Node *self);
-static PyObject *Node_parent(Node *self);
-static PyObject *Node_root(Node *self);
-static PyObject *Node_next(Node *self);
-static PyObject *Node_nextTag(Node *self, PyObject *args);
-static PyObject *Node_previous(Node *self);
-static PyObject *Node_previousTag(Node *self, PyObject *args);
-static PyObject *Node_toString(Node *self, PyObject *args);
-static PyObject *Node_toPrettyString(Node *self, PyObject *args);
-static PyObject *Node_insertTag(Node *self, PyObject *args);
-static PyObject *Node_appendSibling(Node *self, PyObject *args);
-static PyObject *Node_prependTag(Node *self, PyObject *args);
-static PyObject *Node_insertData(Node *self, PyObject *args);
-static PyObject *Node_prependData(Node *self, PyObject *args);
-static PyObject *Node_appendSiblingData(Node *self, PyObject *args);
-static PyObject *Node_insertNode(Node *self, PyObject *args);
-static PyObject *Node_setData(Node *self, PyObject *args);
-static PyObject *Node_hide(Node *self, PyObject *args);
-
-static PyMethodDef Node_methods[] = {
-	{ "type", (PyCFunction)Node_type_func, METH_NOARGS,
-	  "Return the type of node." },
-	{ "__reduce__", (PyCFunction)Node_reduce, METH_NOARGS,
-	  "used by pickle" },
-	{ "name", (PyCFunction)Node_name, METH_NOARGS,
-	  "Return tag name." },
-	{ "data", (PyCFunction)Node_data, METH_NOARGS,
-	  "Return node's character data." },
-	{ "setData", (PyCFunction)Node_setData, METH_VARARGS,
-	  "Set character data child of the tag." },
-	{ "attributes", (PyCFunction)Node_attributes, METH_NOARGS,
-	  "Return node's attribute names." },
-	{ "getAttribute", (PyCFunction)Node_getAttribute, METH_VARARGS,
-	  "Return value of a tag attribute." },
-	{ "setAttribute", (PyCFunction)Node_setAttribute, METH_VARARGS,
-	  "Set the value of a tag attribute." },
-	{ "getTag", (PyCFunction)Node_getTag, METH_VARARGS,
-	  "Return first child tag with the given name." },
-	{ "getTagData", (PyCFunction)Node_getTagData, METH_VARARGS,
-	  "Return character data of the child tag with given name." },
-	{ "tags", (PyCFunction)Node_tags, METH_VARARGS,
-	  "Iterate over all or optionally only matching tags." },
-	{ "firstChild", (PyCFunction)Node_firstChild, METH_NOARGS,
-	  "Return first child node." },
-	{ "parent", (PyCFunction)Node_parent, METH_NOARGS,
-	  "Return parent node." },
-	{ "root", (PyCFunction)Node_root, METH_NOARGS,
-	  "Return topmost parent node." },
-	{ "nextTag", (PyCFunction)Node_nextTag, METH_VARARGS,
-	  "Return next sibling tag node." },
-	{ "next", (PyCFunction)Node_next, METH_NOARGS,
-	  "Return next sibling node." },
-	{ "previousTag", (PyCFunction)Node_previousTag, METH_VARARGS,
-	  "Return previous sibling tag node." },
-	{ "previous", (PyCFunction)Node_previous, METH_NOARGS,
-	  "Return previous sibling node." },
-	{ "toString", (PyCFunction)Node_toString, METH_NOARGS,
-	  "Convert a document tree to XML string representation." },
-	{ "toPrettyString", (PyCFunction)Node_toPrettyString, METH_NOARGS,
-	  "Convert a document tree to indented XML string representation." },
-	{ "insertTag", (PyCFunction)Node_insertTag, METH_VARARGS,
-	  "Insert a child tag node with given name." },
-	{ "appendTag", (PyCFunction)Node_appendSibling, METH_VARARGS,
-	  "Append a sibling tag node with given name." },
-	{ "prependTag", (PyCFunction)Node_prependTag, METH_VARARGS,
-	  "Prepend a sibling tag node with given name." },
-	{ "insertData", (PyCFunction)Node_insertData, METH_VARARGS,
-	  "Insert a child character data node with given text." },
-	{ "appendData", (PyCFunction)Node_appendSiblingData, METH_VARARGS,
-	  "Append a sibling character data node with given text." },
-	{ "prependData", (PyCFunction)Node_prependData, METH_VARARGS,
-	  "Prepend a sibling character data node with given text." },
-	{ "insertNode", (PyCFunction)Node_insertNode, METH_VARARGS,
-	  "Insert another document as a child." },
-	{ "hide", (PyCFunction)Node_hide, METH_VARARGS,
-	  "Hide tag from document tree." },
-	{ NULL }
-};
-
-static PyTypeObject Node_type = {
-	PyVarObject_HEAD_INIT(NULL,0)
-	"piksemel.Node",	/* tp_name */
-	sizeof(Node),		/* tp_basicsize */
-	0,			/* tp_itemsize */
-	(destructor)Node_dealloc,/* tp_dealloc */
-	0,			/* tp_print */
-	0,			/* tp_getattr */
-	0,			/* tp_setattr  */
-	0,			/* tp_compare */
-	0,			/* tp_repr */
-	0,			/* tp_as_number */
-	0,			/* tp_as_sequence */
-	0,			/* tp_as_mapping */
-	0,			/* tp_hash */
-	0,			/* tp_call */
-	0,			/* tp_str */
-	0,			/* tp_getattro */
-	0,			/* tp_setattro */
-	0,			/* tp_as_buffer */
-	Py_TPFLAGS_DEFAULT,	/* tp_flags */
-	"XML node object",	/* tp_doc */
-	0,			/* tp_traverse */
-	0,			/* tp_clear */
-	0,			/* tp_richcompare */
-	0,			/* tp_weaklistoffset */
-	(getiterfunc)Node_iter,	/* tp_iter */
-	0,			/* tp_iternext */
-	Node_methods,		/* tp_methods */
-	0,			/* tp_members */
-	0,			/* tp_getset */
-	0,			/* tp_base */
-	0,			/* tp_dict */
-	0,			/* tp_descr_get */
-	0,			/* tp_descr_set */
-	0,			/* tp_dictoffset */
-	0,			/* tp_init */
-	0,			/* tp_alloc */
-	0			/* tp_new */
-};
+/*** Piksemel Nodes ***/
 
 static void
-Document_dealloc(Document *self)
+Node_dealloc(Node *self)
 {
-	if (self->document) iks_delete(self->document);
+	if (self->doc) {
+		Py_DECREF(self->doc);
+	}
 	PyTypeObject* ob_type(PyObject *self);
-}
-
-static PyObject *
-new_node(Document *doc, iks *xml)
-{
-	Node *node;
-	int ref = 1;
-
-	if (!xml) return PyErr_NoMemory();
-
-	if (!doc) {
-		doc = PyObject_New(Document, &Document_type);
-		doc->document = xml;
-		ref = 0;
-	}
-	node = PyObject_New(Node, &Node_type);
-	node->doc = doc;
-	if (ref) {
-		Py_INCREF(doc);
-	}
-	node->node = xml;
-	return (PyObject *)node;
-}
-
-static PyObject *
-Iter_iter(Iter *self)
-{
-	Py_INCREF(self);
-	return (PyObject *)self;
-}
-
-static PyObject *
-Iter_next(Iter *self)
-{
-	iks *node;
-
-	node = self->node;
-	if (!node) return NULL;
-
-	if (self->tags) {
-		self->node = iks_next_tag(node);
-		if (self->node && self->tagname) {
-			while (self->node && (strcmp(self->tagname, iks_name(self->node)) != 0)) {
-				self->node = iks_next_tag(self->node);
-			}
-		}
-	} else {
-		self->node = iks_next(node);
-	}
-
-	return new_node(self->doc, node);
 }
 
 static PyObject *
@@ -335,14 +193,6 @@ Node_iter(Node *self)
 	return (PyObject *)iter;
 }
 
-static void
-Node_dealloc(Node *self)
-{
-	if (self->doc) {
-		Py_DECREF(self->doc);
-	}
-	PyTypeObject* ob_type(PyObject *self);
-}
 
 static PyObject *
 Node_type_func(Node *self)
@@ -914,6 +764,138 @@ Node_hide(Node *self, PyObject *args)
 
 	Py_INCREF(Py_None);
 	return Py_None;
+}
+
+/*** Node Methodes ***/
+
+static PyMethodDef Node_methods[] = {
+	{ "type", (PyCFunction)Node_type_func, METH_NOARGS,
+	  "Return the type of node." },
+	{ "__reduce__", (PyCFunction)Node_reduce, METH_NOARGS,
+	  "used by pickle" },
+	{ "name", (PyCFunction)Node_name, METH_NOARGS,
+	  "Return tag name." },
+	{ "data", (PyCFunction)Node_data, METH_NOARGS,
+	  "Return node's character data." },
+	{ "setData", (PyCFunction)Node_setData, METH_VARARGS,
+	  "Set character data child of the tag." },
+	{ "attributes", (PyCFunction)Node_attributes, METH_NOARGS,
+	  "Return node's attribute names." },
+	{ "getAttribute", (PyCFunction)Node_getAttribute, METH_VARARGS,
+	  "Return value of a tag attribute." },
+	{ "setAttribute", (PyCFunction)Node_setAttribute, METH_VARARGS,
+	  "Set the value of a tag attribute." },
+	{ "getTag", (PyCFunction)Node_getTag, METH_VARARGS,
+	  "Return first child tag with the given name." },
+	{ "getTagData", (PyCFunction)Node_getTagData, METH_VARARGS,
+	  "Return character data of the child tag with given name." },
+	{ "tags", (PyCFunction)Node_tags, METH_VARARGS,
+	  "Iterate over all or optionally only matching tags." },
+	{ "firstChild", (PyCFunction)Node_firstChild, METH_NOARGS,
+	  "Return first child node." },
+	{ "parent", (PyCFunction)Node_parent, METH_NOARGS,
+	  "Return parent node." },
+	{ "root", (PyCFunction)Node_root, METH_NOARGS,
+	  "Return topmost parent node." },
+	{ "nextTag", (PyCFunction)Node_nextTag, METH_VARARGS,
+	  "Return next sibling tag node." },
+	{ "next", (PyCFunction)Node_next, METH_NOARGS,
+	  "Return next sibling node." },
+	{ "previousTag", (PyCFunction)Node_previousTag, METH_VARARGS,
+	  "Return previous sibling tag node." },
+	{ "previous", (PyCFunction)Node_previous, METH_NOARGS,
+	  "Return previous sibling node." },
+	{ "toString", (PyCFunction)Node_toString, METH_NOARGS,
+	  "Convert a document tree to XML string representation." },
+	{ "toPrettyString", (PyCFunction)Node_toPrettyString, METH_NOARGS,
+	  "Convert a document tree to indented XML string representation." },
+	{ "insertTag", (PyCFunction)Node_insertTag, METH_VARARGS,
+	  "Insert a child tag node with given name." },
+	{ "appendTag", (PyCFunction)Node_appendSibling, METH_VARARGS,
+	  "Append a sibling tag node with given name." },
+	{ "prependTag", (PyCFunction)Node_prependTag, METH_VARARGS,
+	  "Prepend a sibling tag node with given name." },
+	{ "insertData", (PyCFunction)Node_insertData, METH_VARARGS,
+	  "Insert a child character data node with given text." },
+	{ "appendData", (PyCFunction)Node_appendSiblingData, METH_VARARGS,
+	  "Append a sibling character data node with given text." },
+	{ "prependData", (PyCFunction)Node_prependData, METH_VARARGS,
+	  "Prepend a sibling character data node with given text." },
+	{ "insertNode", (PyCFunction)Node_insertNode, METH_VARARGS,
+	  "Insert another document as a child." },
+	{ "hide", (PyCFunction)Node_hide, METH_VARARGS,
+	  "Hide tag from document tree." },
+	{ NULL }
+};
+
+static PyTypeObject Node_type = {
+	PyVarObject_HEAD_INIT(NULL,0)
+	"piksemel.Node",	/* tp_name */
+	sizeof(Node),		/* tp_basicsize */
+	0,			/* tp_itemsize */
+	(destructor)Node_dealloc,/* tp_dealloc */
+	0,			/* tp_print */
+	0,			/* tp_getattr */
+	0,			/* tp_setattr  */
+	0,			/* tp_compare */
+	0,			/* tp_repr */
+	0,			/* tp_as_number */
+	0,			/* tp_as_sequence */
+	0,			/* tp_as_mapping */
+	0,			/* tp_hash */
+	0,			/* tp_call */
+	0,			/* tp_str */
+	0,			/* tp_getattro */
+	0,			/* tp_setattro */
+	0,			/* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT,	/* tp_flags */
+	"XML node object",	/* tp_doc */
+	0,			/* tp_traverse */
+	0,			/* tp_clear */
+	0,			/* tp_richcompare */
+	0,			/* tp_weaklistoffset */
+	(getiterfunc)Node_iter,	/* tp_iter */
+	0,			/* tp_iternext */
+	Node_methods,		/* tp_methods */
+	0,			/* tp_members */
+	0,			/* tp_getset */
+	0,			/* tp_base */
+	0,			/* tp_dict */
+	0,			/* tp_descr_get */
+	0,			/* tp_descr_set */
+	0,			/* tp_dictoffset */
+	0,			/* tp_init */
+	0,			/* tp_alloc */
+	0			/* tp_new */
+};
+
+static void
+Document_dealloc(Document *self)
+{
+	if (self->document) iks_delete(self->document);
+	PyTypeObject* ob_type(PyObject *self);
+}
+
+static PyObject *
+new_node(Document *doc, iks *xml)
+{
+	Node *node;
+	int ref = 1;
+
+	if (!xml) return PyErr_NoMemory();
+
+	if (!doc) {
+		doc = PyObject_New(Document, &Document_type);
+		doc->document = xml;
+		ref = 0;
+	}
+	node = PyObject_New(Node, &Node_type);
+	node->doc = doc;
+	if (ref) {
+		Py_INCREF(doc);
+	}
+	node->node = xml;
+	return (PyObject *)node;
 }
 
 /*** Module Functions ***/
