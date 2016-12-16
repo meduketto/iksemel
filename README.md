@@ -1,17 +1,17 @@
 # iksemel
-Mine XML Parser for my personal project.
-This project forked from Pardus-Linux github repo but orginal iksemel write for using with python2. I rewrite pyiks.c for using iksemel in python3.
+My XML Parser for my personal project.
+This project has been forked from Pardus-Linux github repo but original iksemel has been written to use with python2. I have rewritten pyiks.c for using iksemel in python3.
 
 
 Install:
 --------
 
-You dont need anything other than an installed Python framework.
+You don't need anything other than an installed Python framework.
 iksemel-lite source is included and compiled built-in to the module.
 
 To compile and install: 
 python3 setup.py install 
-then you can import the piksemel module in your python programs.
+then you can import the iksemel module in your python programs.
 
 
 Documentation:
