@@ -1,7 +1,6 @@
 2016-12-16:
-   *I should fix "undefined referance" error
-   *Rewrite pyiks with another way(pyiks3.c)
-
+    *Rewrite pyiks with another way(pyiks3.c) but there are fixes because of Node_type.
+    *
 2016-12-04:
     *I rewrite pyiks.c but there are a lot of runtime error. Thats should fix.
     *I upload tests folder.
@@ -12,7 +11,6 @@
     *I should fix 268. and 346. lines (268 ve 346 numaralı satırları düzeltmeliyim)
     *rewrite module initialization(modül initlenmesi düzeltilmeli)
     
-2016-10-14
+2016-10-14:
     *Start review pyiks.c(pyiks dosyası yeniden yazılmaya başlandı.)
     *I will rewrite tests and setup.py(tests klasörü ve setup.py klasörü yazılacak.)
-   
