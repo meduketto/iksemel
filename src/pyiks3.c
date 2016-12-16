@@ -40,7 +40,6 @@ typedef struct {
 	char *tagname;
 } Iter;
 
-/*** Document Dealloc ***/
 static void
 Document_dealloc(Document *self)
 {
@@ -48,7 +47,6 @@ Document_dealloc(Document *self)
 	PyTypeObject* ob_type(PyObject *self);
 }
 
-/*** Document Objects ***/
 static PyTypeObject Document_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
 	"piksemel.Document",	/* tp_name */
@@ -90,8 +88,6 @@ static PyTypeObject Document_type = {
 	0			/* tp_new */
 };
 
-/*** Iterators ***/
-
 static PyObject *
 Iter_iter(Iter *self)
 {
@@ -120,8 +116,6 @@ Iter_next(Iter *self)
 
 	return new_node(self->doc, node);
 }
-
-/*** Iterator Objects ***/
 
 static PyTypeObject Iter_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
@@ -164,8 +158,6 @@ static PyTypeObject Iter_type = {
 	0			/* tp_new */
 };
 
-/*** Piksemel Nodes ***/
-
 static void
 Node_dealloc(Node *self)
 {
@@ -174,7 +166,6 @@ Node_dealloc(Node *self)
 	}
 	PyTypeObject* ob_type(PyObject *self);
 }
-
 static PyObject *
 Node_iter(Node *self)
 {
@@ -192,7 +183,6 @@ Node_iter(Node *self)
 	iter->tagname = NULL;
 	return (PyObject *)iter;
 }
-
 
 static PyObject *
 Node_type_func(Node *self)
@@ -718,6 +708,7 @@ Node_appendSiblingData(Node *self, PyObject *args)
 	return new_node(self->doc, node);
 }
 
+
 static PyObject *
 Node_prependData(Node *self, PyObject *args)
 {
@@ -765,8 +756,6 @@ Node_hide(Node *self, PyObject *args)
 	Py_INCREF(Py_None);
 	return Py_None;
 }
-
-/*** Node Methodes ***/
 
 static PyMethodDef Node_methods[] = {
 	{ "type", (PyCFunction)Node_type_func, METH_NOARGS,
@@ -869,13 +858,6 @@ static PyTypeObject Node_type = {
 	0			/* tp_new */
 };
 
-static void
-Document_dealloc(Document *self)
-{
-	if (self->document) iks_delete(self->document);
-	PyTypeObject* ob_type(PyObject *self);
-}
-
 static PyObject *
 new_node(Document *doc, iks *xml)
 {
@@ -972,6 +954,7 @@ static PyMethodDef methods[] = {
 	  "Create a new document with given root tag name."},
 	{ NULL, NULL, 0, NULL }
 };
+
 static struct PyModuleDef piksemelmodule ={
 	PyModuleDef_HEAD_INIT,
 	"piksemel",
