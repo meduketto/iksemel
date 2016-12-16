@@ -161,7 +161,13 @@ static PyTypeObject Iter_type = {
 	0			/* tp_new */
 };
 
-/*** Nodes ***/
+           /*** Nodes ***/
+/******************************************/
+/*        where is Node_type              */
+/*  Bu kısımda kod yazarken type'ları     */
+/*başka bir şekilde yapıyorduk ama nasıl? */
+/******************************************/
+
 static PyObject *
 new_node(Document *doc, iks *xml)
 {
@@ -175,7 +181,7 @@ new_node(Document *doc, iks *xml)
 		doc->document = xml;
 		ref = 0;
 	}
-	node = PyObject_New(Node, &Node_type);
+	node = PyObject_New(Node, &Node_type); /*nesi eksik bu Node_type'ın* ne gözden ne kaçtı acaba?*/
 	node->doc = doc;
 	if (ref) {
 		Py_INCREF(doc);
