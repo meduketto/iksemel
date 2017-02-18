@@ -28,7 +28,7 @@ distfiles = """
 """
 
 if 'dist' in sys.argv:
-    distdir = "piksemel-%s" % version
+    distdir = "iksemel-%s" % version
     list = []
     for t in distfiles.split():
         list.extend(glob.glob(t))
@@ -43,7 +43,7 @@ if 'dist' in sys.argv:
             if not os.path.exists(dn):
                 os.mkdir(dn)
         shutil.copy(file_, os.path.join(distdir, file_))
-    os.popen("tar -czf %s %s" % ("piksemel-" + version + ".tar.gz", distdir))
+    os.popen("tar -czf %s %s" % ("iksemel-" + version + ".tar.gz", distdir))
     shutil.rmtree(distdir)
     sys.exit(0)
 
@@ -73,9 +73,9 @@ class Install(install):
 
 
 setup(
-    name='piksemel',
+    name='iksemel',
     version=version,
-    ext_modules=[Extension('piksemel',
+    ext_modules=[Extension('iksemel',
                             ['src/iksemel.c','src/pyiks.c'],
                             extra_compile_args=["-fvisibility=hidden"])],
     cmdclass = {

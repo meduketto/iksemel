@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import piksemel as iks
+import iksemel as iks
 
 doc_xml = """
 <test>

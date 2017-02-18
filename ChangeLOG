@@ -1,3 +1,12 @@
+2017-02-02 AquilaNipalensis:
+    *Buglar temizlendi. İsim piksemel idi iksemel yapıldı
+    *Hatalar elden geçirildi. henüz stabil değil
+    *Testler düzenlendi
+
+2017-02-02 AquilaNipalensis:
+    *pyiks.c dosyasinda hatalar resbit edildi. Gideriliyor.
+     ikinci bir emre kadar kullanilamaz....
+
 2016-12-16 AquilaNipalensis:
     *ilkermanap'ın katkıları ile çalıştırıldı :)
     

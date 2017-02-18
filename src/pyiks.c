@@ -10,7 +10,7 @@
 #include <python3.4m/Python.h>
 #include "iksemel.h"
 
-PyObject *piksemel_module;
+PyObject *iksemel_module;
 
 
 /*** Exceptions ***/
@@ -44,7 +44,7 @@ static void Document_dealloc(Document *self);
 
 static PyTypeObject Document_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"piksemel.Document",	/* tp_name */
+	"iksemel.Document",	/* tp_name */
 	sizeof(Document),	/* tp_basicsize */
 	0,			/* tp_itemsize */
 	(destructor)Document_dealloc,	/* tp_dealloc */
@@ -88,7 +88,7 @@ static PyObject *Iter_next(Iter *self);
 
 static PyTypeObject Iter_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"piksemel.Iter",	/* tp_name */
+	"iksemel.Iter",	/* tp_name */
 	sizeof(Iter),		/* tp_basicsize */
 	0,			/* tp_itemsize */
 	0,			/* tp_dealloc */
@@ -220,7 +220,7 @@ static PyMethodDef Node_methods[] = {
 
 static PyTypeObject Node_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"piksemel.Node",	/* tp_name */
+	"iksemel.Node",	/* tp_name */
 	sizeof(Node),		/* tp_basicsize */
 	0,			/* tp_itemsize */
 	(destructor)Node_dealloc,/* tp_dealloc */
@@ -263,8 +263,10 @@ static void
 Document_dealloc(Document *self)
 {
 	if (self->document) iks_delete(self->document);
-	PyTypeObject* ob_type(PyObject *self);
+	//PyTypeObject* ob_type(PyObject *self);
+	Py_TYPE(self)->tp_free(self);
 }
+
 
 static PyObject *
 new_node(Document *doc, iks *xml)
@@ -341,7 +343,8 @@ Node_dealloc(Node *self)
 	if (self->doc) {
 		Py_DECREF(self->doc);
 	}
-	PyTypeObject* ob_type(PyObject *self);
+	//PyTypeObject* ob_type(PyObject *self);
+	Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *
@@ -365,7 +368,7 @@ Node_reduce(Node *self, PyObject *args)
 	state = Node_toString(self, args);
 	if (!state) return NULL;
 
-	dict = PyModule_GetDict(piksemel_module);
+	dict = PyModule_GetDict(iksemel_module);
 	if (!dict) return NULL;
 	func = PyDict_GetItemString(dict, "parseString");
 	if (!func) return NULL;
@@ -990,9 +993,9 @@ static PyMethodDef methods[] = {
 	  "Create a new document with given root tag name."},
 	{ NULL, NULL, 0, NULL }
 };
-static struct PyModuleDef piksemelmodule ={
+static struct PyModuleDef iksemelmodule ={
 	PyModuleDef_HEAD_INIT,
-	"piksemel",
+	"iksemel",
 	NULL,
 	-1,
 	methods
@@ -1000,23 +1003,23 @@ static struct PyModuleDef piksemelmodule ={
 
 __attribute__((visibility("default")))
 PyMODINIT_FUNC 
-PyInit_piksemel(void)
+PyInit_iksemel(void)
 {
 	PyObject *m;
 
-	m = PyModule_Create(&piksemelmodule);
+	m = PyModule_Create(&iksemelmodule);
 	/* constants */
 	PyModule_AddIntConstant(m, "TAG", IKS_TAG);
 	PyModule_AddIntConstant(m, "ATTRIBUTE", IKS_ATTRIBUTE);
 	PyModule_AddIntConstant(m, "DATA", IKS_CDATA);
 	/* exceptions */
-	ParseError = PyErr_NewException("piksemel.ParseError", NULL, NULL);
+	ParseError = PyErr_NewException("iksemel.ParseError", NULL, NULL);
 	Py_INCREF(ParseError);
 	PyModule_AddObject(m, "ParseError", ParseError);
-	NotTag = PyErr_NewException("piksemel.NotTag", NULL, NULL);
+	NotTag = PyErr_NewException("iksemel.NotTag", NULL, NULL);
 	Py_INCREF(NotTag);
 	PyModule_AddObject(m, "NotTag", NotTag);
-	NotData = PyErr_NewException("piksemel.NotData", NULL, NULL);
+	NotData = PyErr_NewException("iksemel.NotData", NULL, NULL);
 	Py_INCREF(NotData);
 	PyModule_AddObject(m, "NotData", NotData);
 	/* types */
@@ -1034,6 +1037,6 @@ PyInit_piksemel(void)
 	Py_INCREF(&Node_type);
 	PyModule_AddObject(m, "Node", (PyObject *)&Node_type);
 
-	piksemel_module = m;
+	iksemel_module = m;
 	return m;
 }

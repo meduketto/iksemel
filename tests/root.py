@@ -1,26 +1,26 @@
 #!/usr/bin/env python
 
-import piksemel
+import iksemel
 
-doc = piksemel.newDocument("lala")
+doc = iksemel.newDocument("lala")
 
 try:
     doc.appendTag("lala")
-except piksemel.NotTag:
+except iksemel.NotTag:
     pass
 
 try:
     doc.appendData("lala")
-except piksemel.NotTag:
+except iksemel.NotTag:
     pass
 
 try:
     doc.prependTag("lala")
-except piksemel.NotTag:
+except iksemel.NotTag:
     pass
 
 try:
     doc.prependData("lala")
-except piksemel.NotTag:
+except iksemel.NotTag:
     pass
 
