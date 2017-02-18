@@ -7,7 +7,7 @@
 ** option) any later version. Please read the COPYING file.
 */
 
-#include <python3.4m/Python.h>
+#include <python3.6m/Python.h>
 #include "iksemel.h"
 
 PyObject *iksemel_module;
