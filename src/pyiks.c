@@ -3,14 +3,14 @@
 **
 ** This program is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU General Public License as published by the
-** Free Software Foundation; either version 2 of the License, or (at your
+** Free Software Foundation; either version 3 of the License, or (at your
 ** option) any later version. Please read the COPYING file.
 */
 
-#include <python3.6m/Python.h>
+#include <Python.h>
 #include "iksemel.h"
 
-PyObject *iksemel_module;
+PyObject *ciksemel_module;
 
 
 /*** Exceptions ***/
@@ -44,7 +44,7 @@ static void Document_dealloc(Document *self);
 
 static PyTypeObject Document_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"iksemel.Document",	/* tp_name */
+	"ciksemel.Document",	/* tp_name */
 	sizeof(Document),	/* tp_basicsize */
 	0,			/* tp_itemsize */
 	(destructor)Document_dealloc,	/* tp_dealloc */
@@ -88,7 +88,7 @@ static PyObject *Iter_next(Iter *self);
 
 static PyTypeObject Iter_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"iksemel.Iter",	/* tp_name */
+	"ciksemel.Iter",	/* tp_name */
 	sizeof(Iter),		/* tp_basicsize */
 	0,			/* tp_itemsize */
 	0,			/* tp_dealloc */
@@ -220,7 +220,7 @@ static PyMethodDef Node_methods[] = {
 
 static PyTypeObject Node_type = {
 	PyVarObject_HEAD_INIT(NULL,0)
-	"iksemel.Node",	/* tp_name */
+	"ciksemel.Node",	/* tp_name */
 	sizeof(Node),		/* tp_basicsize */
 	0,			/* tp_itemsize */
 	(destructor)Node_dealloc,/* tp_dealloc */
@@ -263,10 +263,8 @@ static void
 Document_dealloc(Document *self)
 {
 	if (self->document) iks_delete(self->document);
-	//PyTypeObject* ob_type(PyObject *self);
-	Py_TYPE(self)->tp_free(self);
+	PyTypeObject* ob_type(PyObject *self);
 }
-
 
 static PyObject *
 new_node(Document *doc, iks *xml)
@@ -343,8 +341,7 @@ Node_dealloc(Node *self)
 	if (self->doc) {
 		Py_DECREF(self->doc);
 	}
-	//PyTypeObject* ob_type(PyObject *self);
-	Py_TYPE(self)->tp_free(self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 static PyObject *
@@ -368,7 +365,7 @@ Node_reduce(Node *self, PyObject *args)
 	state = Node_toString(self, args);
 	if (!state) return NULL;
 
-	dict = PyModule_GetDict(iksemel_module);
+	dict = PyModule_GetDict(ciksemel_module);
 	if (!dict) return NULL;
 	func = PyDict_GetItemString(dict, "parseString");
 	if (!func) return NULL;
@@ -809,7 +806,7 @@ Node_appendSibling(Node *self, PyObject *args)
 		return NULL;
 	}
 
-	node = iks_insert_sibling(self->node, name);
+	node = iks_append(self->node, name);
 
 	return new_node(self->doc, node);
 }
@@ -922,7 +919,7 @@ Node_hide(Node *self, PyObject *args)
 /*** Module Functions ***/
 
 static PyObject *
-piks_parse(PyObject *self, PyObject *args)
+ciks_parse(PyObject *self, PyObject *args)
 {
 	char *file;
 	iks *doc;
@@ -948,7 +945,7 @@ piks_parse(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-piks_parseString(PyObject *self, PyObject *args)
+ciks_parseString(PyObject *self, PyObject *args)
 {
 	iks *doc;
 	char *str;
@@ -971,7 +968,7 @@ piks_parseString(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-piks_newDocument(PyObject *self, PyObject *args)
+ciks_newDocument(PyObject *self, PyObject *args)
 {
 	iks *doc;
 	char *name;
@@ -985,17 +982,17 @@ piks_newDocument(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef methods[] = {
-	{ "parse", piks_parse, METH_VARARGS,
+	{ "parse", ciks_parse, METH_VARARGS,
 	  "Parse given XML file and generate document tree."},
-	{ "parseString", piks_parseString, METH_VARARGS,
+	{ "parseString", ciks_parseString, METH_VARARGS,
 	  "Parse given XML string and generate document tree."},
-	{ "newDocument", piks_newDocument, METH_VARARGS,
+	{ "newDocument", ciks_newDocument, METH_VARARGS,
 	  "Create a new document with given root tag name."},
 	{ NULL, NULL, 0, NULL }
 };
 static struct PyModuleDef iksemelmodule ={
 	PyModuleDef_HEAD_INIT,
-	"iksemel",
+	"ciksemel",
 	NULL,
 	-1,
 	methods
@@ -1003,7 +1000,7 @@ static struct PyModuleDef iksemelmodule ={
 
 __attribute__((visibility("default")))
 PyMODINIT_FUNC 
-PyInit_iksemel(void)
+PyInit_ciksemel(void)
 {
 	PyObject *m;
 
@@ -1013,13 +1010,13 @@ PyInit_iksemel(void)
 	PyModule_AddIntConstant(m, "ATTRIBUTE", IKS_ATTRIBUTE);
 	PyModule_AddIntConstant(m, "DATA", IKS_CDATA);
 	/* exceptions */
-	ParseError = PyErr_NewException("iksemel.ParseError", NULL, NULL);
+	ParseError = PyErr_NewException("ciksemel.ParseError", NULL, NULL);
 	Py_INCREF(ParseError);
 	PyModule_AddObject(m, "ParseError", ParseError);
-	NotTag = PyErr_NewException("iksemel.NotTag", NULL, NULL);
+	NotTag = PyErr_NewException("ciksemel.NotTag", NULL, NULL);
 	Py_INCREF(NotTag);
 	PyModule_AddObject(m, "NotTag", NotTag);
-	NotData = PyErr_NewException("iksemel.NotData", NULL, NULL);
+	NotData = PyErr_NewException("ciksemel.NotData", NULL, NULL);
 	Py_INCREF(NotData);
 	PyModule_AddObject(m, "NotData", NotData);
 	/* types */
@@ -1037,6 +1034,6 @@ PyInit_iksemel(void)
 	Py_INCREF(&Node_type);
 	PyModule_AddObject(m, "Node", (PyObject *)&Node_type);
 
-	iksemel_module = m;
+	ciksemel_module = m;
 	return m;
 }

@@ -1,5 +1,5 @@
 /* iksemel (XML parser for Jabber)
-** Copyright (C) 2000-2004 Gurer Ozen <madcat@e-kolay.net>
+** Copyright (C) 2000-2007 Gurer Ozen <madcat@e-kolay.net>
 ** This code is free software; you can redistribute it and/or
 ** modify it under the terms of GNU Lesser General Public License.
 */
@@ -57,14 +57,14 @@ typedef struct iks_struct iks;
 iks *iks_new (const char *name);
 iks *iks_new_within (const char *name, ikstack *s);
 iks *iks_insert (iks *x, const char *name);
-iks *iks_insert_sibling (iks *x, const char *name);
-iks *iks_prepend(iks *x, const char *name);
 iks *iks_insert_cdata (iks *x, const char *data, size_t len);
-iks *iks_append_cdata(iks *x, const char *data, size_t len);
-iks *iks_prepend_cdata(iks *x, const char *data, size_t len);
-iks *iks_set_cdata(iks *x, const char *data, size_t len);
 iks *iks_insert_attrib (iks *x, const char *name, const char *value);
 iks *iks_insert_node (iks *x, iks *y);
+iks *iks_set_cdata(iks *x, const char *data, size_t len);
+iks *iks_append (iks *x, const char *name);
+iks *iks_prepend (iks *x, const char *name);
+iks *iks_append_cdata (iks *x, const char *data, size_t len);
+iks *iks_prepend_cdata (iks *x, const char *data, size_t len);
 void iks_hide (iks *x);
 void iks_delete (iks *x);
 iks *iks_next (iks *x);
@@ -139,13 +139,6 @@ int iks_save (const char *fname, iks *x);
 
 /*****  transport layer  *****/
 
-typedef void (iksTClose)(void *socket);
-typedef int (iksTConnect)(iksparser *prs, void **socketptr, const char *server, int port);
-typedef int (iksTSend)(void *socket, const char *data, size_t len);
-typedef int (iksTRecv)(void *socket, char *buffer, size_t buf_len, int timeout);
-typedef int (iksTConnectFD)(iksparser *prs, void **socketptr, void *fd);
-typedef void *(iksTGetFD)(void *socket);
-
 enum iksasyncevents {
 	IKS_ASYNC_RESOLVED,
 	IKS_ASYNC_CONNECTED,
@@ -156,18 +149,28 @@ enum iksasyncevents {
 	IKS_ASYNC_ERROR
 };
 
-typedef int (iksAsyncNotify)(void *user_data, int event, void *event_data);
-typedef int (iksTConnectAsync)(iksparser *prs, void **socketptr, const char *server, int port, void *notify_data, iksAsyncNotify *notify_func);
+typedef struct iksasyncevent_struct {
+	int event;
+	int data0;
+	int data1;
+} iksasyncevent;
 
-typedef struct ikstransport_struct {
-	/* basic api, connect can be NULL if one of the other connect funcs are used */
+typedef void (iksTClose)(void *socket);
+typedef int (iksTConnect)(iksparser *prs, void **socketptr, const char *server, int port);
+typedef int (iksTSend)(void *socket, const char *data, size_t len);
+typedef int (iksTRecv)(void *socket, char *buffer, size_t buf_len, int timeout);
+typedef int (iksAsyncNotify)(void *user_data, iksasyncevent *event);
+typedef int (iksTConnectAsync)(iksparser *prs, void **socketptr, const char *server, const char *server_name, int port, void *notify_data, iksAsyncNotify *notify_func);
+
+#define IKS_TRANSPORT_V1 0
+
+typedef const struct ikstransport_struct {
+	int abi_version;
+	/* basic api, connect can be NULL if only async api is provided */
 	iksTConnect *connect;
 	iksTSend *send;
 	iksTRecv *recv;
 	iksTClose *close;
-	/* optional fd api */
-	iksTConnectFD *connect_fd;
-	iksTGetFD *get_fd;
 	/* optional async api */
 	iksTConnectAsync *connect_async;
 } ikstransport;
@@ -182,7 +185,9 @@ enum iksneterror {
 	IKS_NET_NOCONN,
 	IKS_NET_RWERR,
 	IKS_NET_NOTSUPP,
-	IKS_NET_TLSFAIL
+	IKS_NET_TLSFAIL,
+	IKS_NET_DROPPED,
+	IKS_NET_UNKNOWN
 };
 
 enum iksnodetype {

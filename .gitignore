@@ -28,6 +28,52 @@
 *.x86_64
 *.hex
 
+build/
+__pycache__/
 # Debug files
 *.dSYM/
-*.su
+
+#Autotool files
+aclocal.m4
+autom4te.cache/
+
+#Configure files
+config.guess
+config.status
+config.sub
+config.log
+configure
+config.h.in
+*.log
+*.trs
+.deps/
+.libs/
+
+
+#Iks test files
+test/tst-*
+
+#Iks compiled files
+doc/iksemel
+include/config.h
+include/stamp-h1
+tools/ikslint
+tools/iksperf
+tools/iksroster
+
+#Makefile files
+Makefile
+Makefile.in
+
+#Tex files
+*.tex
+
+#Libtool files
+libtool
+*.pc
+missing
+depcomp
+install-sh
+compile
+ltmain.sh
+test-driver
