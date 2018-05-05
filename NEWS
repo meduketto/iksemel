@@ -1,7 +1,12 @@
-V1.4 (2018-02-18)
-* Lookuping the codes and start new developing
-* Added iks_set_cdata function
-* Write a pyiks.c module  for using iksemel in python
+V1.5 (upcoming release)
+* You can now use OpenSSL or GNUTLS as the TLS back-end (compile time option).
+* Python bindings. You can use iksemel from Python as an XMPP client library
+  or as a very fast and memory efficient XML parser.
+
+V1.4 (2009-07-25)
+* Some previously rejected valid UTF8 sequences are now accepted.
+* Whitespace is allowed between attribute name, equal sign and value.
+* Small fixes all around (see ChangeLog).
 
 V1.3 (2007-08-02)
 * Project is moved to

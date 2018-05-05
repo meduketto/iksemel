@@ -1,0 +1,478 @@
+commit c84d720116c58eab5801e51bf3d0c378ef464b8d
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri May 4 20:58:26 2018 +0300
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Fri May 4 20:58:26 2018 +0300
+
+    Hangi akla hizmet ise test dosylarını silmişim
+
+commit 796cdd8a6ec7e8fbba41af1615bb5bf2b538a143
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Feb 20 14:41:16 2018 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Tue Feb 20 14:41:16 2018 +0200
+
+    İksemel will be a suitable kit. I rewrite Gurer's iksemel
+
+commit 7774c14325bbcfae67d810678621534bb4b37e8f
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sat Feb 18 16:39:17 2017 +0000
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Sat Feb 18 16:39:17 2017 +0000
+
+    Update pyiks.c
+
+commit b31fde1e82c1cf481a448b17bf47820fe747bf58
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sat Feb 18 09:51:44 2017 +0000
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Sat Feb 18 09:51:44 2017 +0000
+
+    gitlaba tasidim hepsini
+
+commit aecf02034b72bf40c57466b07be4f6ae305321de
+Merge: 27965e9 8410f1c
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Jan 3 07:02:28 2017 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Tue Jan 3 07:02:28 2017 +0200
+
+    Merge pull request #1 from AquilaNipalensis/master
+    
+    tests eklendi
+
+commit 8410f1ca43c3be707f94fb3011d2977041983d1a
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Jan 3 07:51:44 2017 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Tue Jan 3 07:51:44 2017 +0200
+
+    testler eklendi
+
+commit e0d1c4b2fbc22612a537f2fadd513c0ced6afb6f
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Dec 27 07:27:48 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Tue Dec 27 07:27:48 2016 +0200
+
+    ufak hata düzeltildi
+
+commit 27965e95903a2a7ab51fda9086a04f82d1aab3c8
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Dec 20 06:34:15 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Tue Dec 20 06:34:15 2016 +0200
+
+    Delete pyiks.err
+
+commit 4f15c96b1da3e985e0de8c15b6e755838d865378
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Tue Dec 20 06:32:55 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Tue Dec 20 06:32:55 2016 +0200
+
+    Delete _config.yml
+
+commit e7fdea3353f1a80d018535a9fac99bd27bed00a9
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 14:05:49 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Mon Dec 19 14:05:49 2016 +0200
+
+    Set theme jekyll-theme-hacker
+
+commit a2989a0933551a9b1622944e6449580cd0976103
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 14:05:41 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Mon Dec 19 14:05:41 2016 +0200
+
+    Set theme jekyll-theme-slate
+
+commit 91cdee20983e7b806b35fa4d0ce97ee019a86d63
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 13:58:41 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 13:58:41 2016 +0200
+
+    Update ChangeLOG
+
+commit 2008fb81647722c207bfba635c195d004aaf1982
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 10:52:41 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 10:52:41 2016 +0200
+
+    Update ChangeLOG
+
+commit 86e8fbfa0a0cbb67e7ca5abc55d28b0df9250604
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 10:51:11 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 10:51:11 2016 +0200
+
+    Update ChangeLOG
+
+commit 8fbb727858212b502deae46121f33a0774cd8174
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 10:48:04 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 10:48:04 2016 +0200
+
+    Update ChangeLOG
+
+commit 6c488981cfa9c3d876e506560e7fa15613faa8e4
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 10:27:21 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 10:27:21 2016 +0200
+
+    Delete pyiks3.c
+
+commit 8d48b6fda2b716bf03d4954a5c38241c5cc38a4f
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 10:33:49 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Mon Dec 19 10:33:49 2016 +0200
+
+    pyiks derlendi sonucu bu dosyada
+
+commit 0ea190592bdf48af57024c95be4d01642b330cdd
+Merge: 0ae810c 012815d
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 19 04:33:23 2016 +0000
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 19 04:33:23 2016 +0000
+
+    Merge pull request #3 from ilkermanap/master
+    
+    py3.4 icin include duzeltildi.. pyiks.c icinde modul return edilmemis…
+
+commit 012815d27b9909c552719d49dc5bb84d5c1ded65
+Author:     Ilker Manap <ilkermanap@gmail.com>
+AuthorDate: Fri Dec 16 19:18:05 2016 +0100
+Commit:     Ilker Manap <ilkermanap@gmail.com>
+CommitDate: Fri Dec 16 19:18:05 2016 +0100
+
+    py3.4 icin include duzeltildi.. pyiks.c icinde modul return edilmemisti, duzeltildi.
+
+commit 0ae810c5ff45a89459ae282b1ef2e9eab37256db
+Merge: 6157741 fb32fa9
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 11:24:42 2016 +0000
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 11:24:42 2016 +0000
+
+    Merge pull request #2 from AquilaNipalensis/AquilaNipalensis
+    
+    Bir değişikliklik yapıldı kontrol edilmeli
+
+commit fb32fa982337816f45f61985091c2cc2fe925be2
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 13:24:35 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 13:24:35 2016 +0200
+
+    Bir değişikliklik yapıldı kontrol edilmeli
+    
+    Node_type problemini düzeltebilmek amacı ile bazı satırlarda değişim yaptım. Hata alacağımın farkındayım ama çıkmadık candan ümit kesilmez :) eve geçince baştan başa kontrol etmem şart
+
+commit 6157741bd23ecee332927ff5d6ab4341b8b1e59e
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 13:18:17 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 13:18:17 2016 +0200
+
+    Update pyiks3.c
+
+commit 55dc1aa6d6a4503c35e72f97bc8abebd88e39e7e
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 13:11:41 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 13:11:41 2016 +0200
+
+    Update ChangeLOG
+
+commit bca26dfb3c8b837ec9e72e7ea88ec13918fca081
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 13:08:43 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 13:08:43 2016 +0200
+
+    make changes
+
+commit 6072075d45a457ecd5acd96f793335d9c8be7e12
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 13:04:03 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 13:04:03 2016 +0200
+
+    Update ChangeLOG
+
+commit 448c3468781177faf719e5b90458d390d7d11bb4
+Merge: db39f10 46945c6
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 11:00:21 2016 +0000
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 11:00:21 2016 +0000
+
+    Merge pull request #1 from kartagis/master
+    
+    Fixed typo in README.md
+
+commit 46945c66a54ef913c3a7bfbabc9de4bd415f80ff
+Author:     Muzaffer Tolga Ozses <mtozses@sabanciuniv.edu>
+AuthorDate: Fri Dec 16 08:42:24 2016 +0300
+Commit:     Muzaffer Tolga Ozses <mtozses@sabanciuniv.edu>
+CommitDate: Fri Dec 16 08:42:24 2016 +0300
+
+    Fixed typo in README.md
+
+commit db39f10533991c56e961eaa66b5f52eb94fa873d
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 06:45:55 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 06:45:55 2016 +0200
+
+    bu dosyanın yedeği çıkarıldı
+
+commit 4caed4a8ef5e15ac28d0b3bb61a554d79c69447f
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 06:45:20 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 16 06:45:20 2016 +0200
+
+    Update pyiks3.c
+
+commit 5fe2746eba783e8f983ed2b6043c7b6e4e579b61
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 07:38:07 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Fri Dec 16 07:38:07 2016 +0200
+
+    yedek dosyam
+
+commit 90a633a8e78903bd7304c17f2df2aa05034c4c96
+Merge: 959857e 503b32b
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 07:25:58 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Fri Dec 16 07:25:58 2016 +0200
+
+    Merge branch 'refs/heads/kem'
+
+commit 503b32b86157880269deda1e64b570bf54fe4aea
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 16 07:25:46 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Fri Dec 16 07:25:46 2016 +0200
+
+    duzenleme
+
+commit 959857e4ae16d211e0e245bebbefb7feee01810a
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Mon Dec 5 10:14:39 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Mon Dec 5 10:14:39 2016 +0200
+
+    Update README.md
+
+commit ff1b7227feee12673b376e7204caf14165c51089
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 20:06:00 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 20:06:00 2016 +0200
+
+    Update README.md
+
+commit ff1a71dd481b6d1503088d284901b3041e9787b7
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 20:05:24 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 20:05:24 2016 +0200
+
+    Update README.md
+
+commit 008e79cfd2891307974d84bbe62c95ea6db330cd
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 20:03:55 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 20:03:55 2016 +0200
+
+    Update ChangeLOG
+
+commit eb31c6ffb8864ba12c1bf8e15fb2510b081c5be8
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 20:00:44 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 20:00:44 2016 +0200
+
+    Update setup.py
+
+commit ec0211a0d6d1deebd7212f1237a0c3a5728170dc
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 20:00:05 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 20:00:05 2016 +0200
+
+    Update iteration.py
+
+commit f29e6019e10426fed53bed2e5bb3295f6370b240
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:59:36 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:59:36 2016 +0200
+
+    Update generate.py
+
+commit e642308fa8083d92756f40a19d2a133fce42cdca
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:58:13 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:58:13 2016 +0200
+
+    Update traverse.py
+
+commit a38ccd9eda6216b32d21d729d6e5b81eeda5c6e6
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:57:35 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:57:35 2016 +0200
+
+    Update root.py
+
+commit 7ffa26b64fa6c2ce4eb4dcf7ecf2dbb8483ddb11
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:56:59 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:56:59 2016 +0200
+
+    Add files via upload
+
+commit 5146a1e62bf7a455fafe3c942347cf3b6a95aa34
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:55:21 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:55:21 2016 +0200
+
+    Create attributes.py
+
+commit d76aeff6ce945785ce29fe1c0583679106210f4b
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:51:23 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:51:23 2016 +0200
+
+    Rewrite pyiks.c
+
+commit 7a1ab0a2730f82d895b47ed2f6609522d10d6a2b
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Sun Dec 4 19:49:26 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Sun Dec 4 19:49:26 2016 +0200
+
+    Rewrite and tested. But there are a lot of problem for
+
+commit 4d49b3fd65e787e1fab203e733a5489b97f3228c
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:49:42 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:49:42 2016 +0200
+
+    Update ChangeLOG
+
+commit 45e826ca3c9d940b32ea84446c7e15ba10dd8ffa
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:44:33 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:44:33 2016 +0200
+
+    rewrite some lines
+
+commit ce7770aa63f5a091266c888b9626457d1e46021b
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:40:53 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:40:53 2016 +0200
+
+    Update README.md
+
+commit 7c8cafd170739aa3289e0ed001863fb928c88ca0
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:32:30 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:32:30 2016 +0200
+
+    rewrite for python3
+
+commit 9f276c3ff2cb6752eab36728a4c7d5e8806c17c9
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:32:03 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:32:03 2016 +0200
+
+    Delete pyiks
+
+commit 453464d4d727bf6fe151428900d81805de263fdf
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:31:55 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:31:55 2016 +0200
+
+    make little changes
+
+commit e1e5721b6732fd4936d211e33ef9071483eed162
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:31:32 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:31:32 2016 +0200
+
+    Create pyiks
+
+commit 4dac461b2b0346d9880360fee2e5ce6db916519f
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:31:16 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:31:16 2016 +0200
+
+    Delete pyiks
+
+commit edc902a09aeaf31960524e73760ec6e194c5a0cf
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:31:08 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:31:08 2016 +0200
+
+    Create pyiks
+
+commit cd7ad82dea0a30041001281604003648c3b26f84
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:30:41 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:30:41 2016 +0200
+
+    Delete pyiks
+
+commit 0ce53b47c22df07d295048e79cdc56ac7f1e3fab
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:30:33 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:30:33 2016 +0200
+
+    Create pyiks
+
+commit e6fbbada31a0939c1cd711b93f95b5f76378684c
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:29:57 2016 +0200
+Commit:     GitHub <noreply@github.com>
+CommitDate: Fri Dec 2 09:29:57 2016 +0200
+
+    Add files via upload
+
+commit 744a70a89b9473fb809f398608438dcc50a67b09
+Author:     Suleyman Poyraz <zaryob.dev@gmail.com>
+AuthorDate: Fri Dec 2 09:28:58 2016 +0200
+Commit:     Suleyman Poyraz <zaryob.dev@gmail.com>
+CommitDate: Fri Dec 2 09:28:58 2016 +0200
+
+    Initial commit

@@ -1,3 +1,74 @@
+
+
+2011-10-18  Gurer
+	* python/: Python bindings and test scripts
+
+2011-10-10  Gurer
+	* iks.c: iks_string() returns nul terminated strings for cdata nodes
+
+2011-10-07  Gurer
+	* sax.c: Fix handling of ending ]] sequences in CDATA sections
+	  bug report and patch by oscarvdbosch
+	* tst-sax.c: Test coverage for fixed bug
+
+2011-10-06  Gurer
+	* configure.ac: without-openssl and without-gnutls options added
+
+2011-10-06  Gurer
+	* configure.ac: Check openssl, it is preferred over gnutls
+	* tls-openssl.c: TLS backend for the openssl library
+
+2011-10-05  Gurer
+	* md5.c: Fix padding for multiples of 64 bytes
+	* tst-md5.c: Test coverage for fixed bug
+
+2009-08-30  Gurer
+	* configure.ac: use pkgconfig for checking gnutls
+	* INSTALL: updated by the autoreconf call
+	* README: gnutls dependency is mentioned
+
+2009-08-07  Gurer
+	* tls-gnutls.c: support timeout value in tls_recv
+
+2009-08-06  Gurer
+	* iksemel.h: new ikstls structure and definitions
+	* tls-gnutls.c: new file, GNUTLS implemantation moved here
+	* stream.c: TLS code is abstracted with new TLS interface
+
+2009-07-25  Gurer
+	* version bump to 1.5 after the release
+
+2009-07-22  Gurer
+	* io-posix.c: send/recv now handles EAGAIN/EINTR.
+
+2009-07-21  Gurer
+	* tst-md5.c: MD5 test improved with examples from RFC1321
+	* iksroster.c: Plain text auth option patch from issue tracker.
+
+2009-07-20  Gurer
+	* tst-sax.c: Fix a va_arg bug with 64bit platforms.
+
+2009-07-18  Gurer
+	* sax.c: Fix attribute array out-of-bounds condition.
+	* iksperf.c: Fix a warning, and use size_t instead of int.
+
+2009-07-04  Gurer
+	* md5.c: use iks_malloc/free like everywhere else.
+	  (reported by Vinay Deshpande)
+	* stream.c: don't leak locally processed challenge node.
+
+2009-04-02  Gurer
+	* sax.c: utf8 validation bug is fixed. Some valid utf8
+	  sequences were not allowed before. Security check is moved
+	  after sequence end point, so position of IKS_BADXML errors
+	  are changed.
+	* tst-sax.c: test case for validation bug added.
+
+2009-03-31  Gurer
+	* Patch by Timothy Lee:
+	  sax.c: Whitespace between "attr, =, value" is valid now.
+	  tst-sax.c: I also added a simple test for that.
+
 2007-08-10  Gurer
 	* version bump to 1.4 after the release
 

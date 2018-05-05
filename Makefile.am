@@ -2,7 +2,11 @@
 ## Process this file with automake to produce Makefile.in
 ##
 
-SUBDIRS = include src tools test doc
+if DO_PYTHON
+python_d = python
+endif
+
+SUBDIRS = include src tools $(python_d) test doc
 
 EXTRA_DIST = HACKING iksemel.pc.in
 
