@@ -6,6 +6,11 @@
 
 #include "reference.h"
 
+#ifndef PyVarObject_HEAD_INIT
+    #define PyVarObject_HEAD_INIT(type, size) \
+        PyObject_HEAD_INIT(type) size,
+#endif
+
 typedef struct {
 	PyObject_HEAD
 } Reference;
@@ -57,7 +62,7 @@ static PyTypeObject Reference_type = {
 static void
 Reference_dealloc(Reference *self)
 {
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void

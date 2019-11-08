@@ -9,7 +9,7 @@
 
 // NOTE: This class uses custom implementation of JID parsing
 // instead of the iks_id_new from jabber.c
-// 
+//
 
 typedef struct {
 	PyObject_HEAD
@@ -140,7 +140,7 @@ JID_dealloc(JID *self)
 	if (self->local) { Py_DECREF(self->local); }
 	if (self->domain) { Py_DECREF(self->domain); }
 	if (self->resource) { Py_DECREF(self->resource); }
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void

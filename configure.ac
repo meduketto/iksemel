@@ -105,11 +105,16 @@ AC_DEFUN([AM_CHECK_PYTHON_HEADERS],
 [AC_REQUIRE([AM_PATH_PYTHON])
 AC_MSG_CHECKING(for headers required to compile python extensions)
 dnl deduce PYTHON_INCLUDES
-py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
-py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
+py_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.prefix)"`
+py_exec_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.exec_prefix)"`
+PYTHON_CONFIG=`which $PYTHON`-config
+if test -x "$PYTHON_CONFIG"; then
+PYTHON_INCLUDES=`$PYTHON_CONFIG --includes 2>/dev/null`
+else
 PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
 if test "$py_prefix" != "$py_exec_prefix"; then
   PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
+fi
 fi
 AC_SUBST(PYTHON_INCLUDES)
 dnl check if the headers exist:
@@ -126,8 +131,9 @@ CPPFLAGS="$save_CPPFLAGS"
 dnl Check Python for binding
 if test "x$with_python" = "xyes"; then
   with_python=no
-  AM_PATH_PYTHON([2.2], , [:])
-  AM_CHECK_PYTHON_HEADERS(with_python=yes,[AC_MSG_ERROR(could not find Python headers)])
+	AM_PATH_PYTHON(,, [:])
+  AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
+  AM_CHECK_PYTHON_HEADERS(with_python=yes, [AC_MSG_ERROR(could not find Python headers)])
 fi
 AM_CONDITIONAL([DO_PYTHON], [test "x$with_python" = "xyes"])
 

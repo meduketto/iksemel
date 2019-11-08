@@ -8,6 +8,11 @@
 #include "reference.h"
 #include "document.h"
 
+#ifndef PyVarObject_HEAD_INIT
+    #define PyVarObject_HEAD_INIT(type, size) \
+        PyObject_HEAD_INIT(type) size,
+#endif
+
 typedef struct {
 	PyObject_HEAD
 	PyObject *ref;
@@ -636,7 +641,7 @@ Document_dealloc(Document *self)
 	Py_DECREF(self->ref);
 	self->doc = NULL;
 	self->ref = NULL;
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void
