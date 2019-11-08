@@ -3,11 +3,6 @@
 #include "document.h"
 #include "node.h"
 
-#ifndef PyVarObject_HEAD_INIT
-    #define PyVarObject_HEAD_INIT(type, size) \
-        PyObject_HEAD_INIT(type) size,
-#endif
-
 PyObject *iksemel_module;
 
 /*** Functions ***/
@@ -103,8 +98,7 @@ static PyMethodDef Node_methods[] = {
 };
 
 static PyTypeObject Node_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Node",	/* tp_name */
 	sizeof(Node),		/* tp_basicsize */
 	0,			/* tp_itemsize */

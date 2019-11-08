@@ -131,7 +131,7 @@ CPPFLAGS="$save_CPPFLAGS"
 dnl Check Python for binding
 if test "x$with_python" = "xyes"; then
   with_python=no
-	AM_PATH_PYTHON(,, [:])
+	AM_PATH_PYTHON([3],, [:])
   AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
   AM_CHECK_PYTHON_HEADERS(with_python=yes, [AC_MSG_ERROR(could not find Python headers)])
 fi

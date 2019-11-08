@@ -30,8 +30,7 @@ static PyMemberDef JID_members[] = {
 };
 
 static PyTypeObject JID_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.JID",		/* tp_name */
 	sizeof(JID),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -120,18 +119,18 @@ JID_str(JID *self)
 	char *resource = "";
 
 	if (self->local && self->local != Py_None) {
-		local = PyString_AsString(self->local);
+		local = PyBytes_AsString(self->local);
 		if (!local) return NULL;
 		localsep = "@";
 	}
-	domain = PyString_AsString(self->domain);
+	domain = PyBytes_AsString(self->domain);
 	if (!domain) return NULL;
 	if (self->resource && self->resource != Py_None) {
-		resource = PyString_AsString(self->resource);
+		resource = PyBytes_AsString(self->resource);
 		if (!resource) return NULL;
 		resourcesep = "/";
 	}
-	return PyString_FromFormat("%s%s%s%s%s", local, localsep, domain, resourcesep, resource);
+	return PyBytes_FromFormat("%s%s%s%s%s", local, localsep, domain, resourcesep, resource);
 }
 
 static void

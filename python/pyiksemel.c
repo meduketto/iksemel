@@ -23,35 +23,25 @@ PyObject *iksemel_module;
 	{ NULL, NULL, 0, NULL }
 };*/
 
-#if PY_MAJOR_VERSION >= 3
-    static struct PyModuleDef iksemeldef = {
-        PyModuleDef_HEAD_INIT,
-        "iksemel",     /* m_name */
-        "This is a module",  /* m_doc */
-        -1,                  /* m_size */
-        NULL,                /* m_methods */
-        NULL,                /* m_reload */
-        NULL,                /* m_traverse */
-        NULL,                /* m_clear */
-        NULL,                /* m_free */
-    };
-#endif
+static struct PyModuleDef iksemeldef = {
+    PyModuleDef_HEAD_INIT,
+    "iksemel",     /* m_name */
+    "This is a module",  /* m_doc */
+    -1,                  /* m_size */
+    NULL,                /* m_methods */
+    NULL,                /* m_reload */
+    NULL,                /* m_traverse */
+    NULL,                /* m_clear */
+    NULL,                /* m_free */
+};
 
-#if PY_MAJOR_VERSION >= 3
-	#define initiksemel PyInit_iksemel
-#endif
+
 PyMODINIT_FUNC
-initiksemel(void)
+PyInit_iksemel(void)
 {
 	PyObject *m;
 
-	#if PY_MAJOR_VERSION >= 3
-	    m = PyModule_Create(&iksemeldef);
-	#else
-	    m = Py_InitModule("iksemel", NULL);
-	#endif
-
-
+	m = PyModule_Create(&iksemeldef);
 
 	exceptions_setup(m);
 	Reference_setup();

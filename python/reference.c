@@ -6,11 +6,6 @@
 
 #include "reference.h"
 
-#ifndef PyVarObject_HEAD_INIT
-    #define PyVarObject_HEAD_INIT(type, size) \
-        PyObject_HEAD_INIT(type) size,
-#endif
-
 typedef struct {
 	PyObject_HEAD
 } Reference;
@@ -18,8 +13,7 @@ typedef struct {
 static void Reference_dealloc(Reference *self);
 
 static PyTypeObject Reference_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Reference",	/* tp_name */
 	sizeof(Reference),	/* tp_basicsize */
 	0,			/* tp_itemsize */
