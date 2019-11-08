@@ -9,7 +9,18 @@
 
 // NOTE: This class uses custom implementation of JID parsing
 // instead of the iks_id_new from jabber.c
-//
+// 
+
+typedef struct {
+	PyObject_HEAD
+	PyObject *local;
+	PyObject *domain;
+	PyObject *resource;
+} JID;
+
+static int JID_init(JID *self, PyObject *args, PyObject *kwargs);
+static PyObject *JID_str(JID *self);
+static void JID_dealloc(JID *self);
 
 static PyMemberDef JID_members[] = {
 	{ "local", T_OBJECT_EX, offsetof(JID, local), 0, "localpart" },
@@ -19,7 +30,8 @@ static PyMemberDef JID_members[] = {
 };
 
 static PyTypeObject JID_type = {
-	PyVarObject_HEAD_INIT(NULL, 0)
+	PyObject_HEAD_INIT(NULL)
+	0,			/* ob_size */
 	"iksemel.JID",		/* tp_name */
 	sizeof(JID),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -108,18 +120,18 @@ JID_str(JID *self)
 	char *resource = "";
 
 	if (self->local && self->local != Py_None) {
-		local = PyBytes_AsString(self->local);
+		local = PyString_AsString(self->local);
 		if (!local) return NULL;
 		localsep = "@";
 	}
-	domain = PyBytes_AsString(self->domain);
+	domain = PyString_AsString(self->domain);
 	if (!domain) return NULL;
 	if (self->resource && self->resource != Py_None) {
-		resource = PyBytes_AsString(self->resource);
+		resource = PyString_AsString(self->resource);
 		if (!resource) return NULL;
 		resourcesep = "/";
 	}
-	return PyBytes_FromFormat("%s%s%s%s%s", local, localsep, domain, resourcesep, resource);
+	return PyString_FromFormat("%s%s%s%s%s", local, localsep, domain, resourcesep, resource);
 }
 
 static void
@@ -128,11 +140,11 @@ JID_dealloc(JID *self)
 	if (self->local) { Py_DECREF(self->local); }
 	if (self->domain) { Py_DECREF(self->domain); }
 	if (self->resource) { Py_DECREF(self->resource); }
-	PyTypeObject* ob_type(PyObject *self);
+	self->ob_type->tp_free((PyObject *) self);
 }
 
 void
-Setup_JID(PyObject *module)
+JID_setup(PyObject *module)
 {
 	JID_type.tp_new = PyType_GenericNew;
 	if (PyType_Ready(&JID_type) < 0) return;

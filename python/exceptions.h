@@ -9,20 +9,9 @@
 
 #include <Python.h>
 
-/*** Objects ***/
+void exceptions_setup(PyObject *module);
+PyObject *exceptions_parse_error(void);
+PyObject *exceptions_stream_error(int e);
 
-static PyObject *ParseError;
-static PyObject *NotTag;
-static PyObject *NotData;
-static PyObject *NotStream;
-
-/*** Exceptions ***/
-
-PyObject *exceptions_parse(void);
-PyObject *exceptions_stream(int e);
-PyObject *exceptions_object(int e);
-
-/*** Setup ***/
-void Setup_Exception(PyObject *module);
 
 #endif  /* EXCEPTIONS_H */

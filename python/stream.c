@@ -8,7 +8,22 @@
 #include "document.h"
 #include "stream.h"
 
-/*** Stream ***/
+typedef struct {
+	PyObject_HEAD
+	PyObject *jid;
+	iksparser *parser;
+	int features;
+	int authorized;
+	int use_sasl;
+	int use_tls;
+} Stream;
+
+static int Stream_init(Stream *self, PyObject *args, PyObject *kwargs);
+static PyObject *Stream_connect(Stream *self, PyObject *args, PyObject *kwargs);
+static PyObject *Stream_fileno(Stream *self);
+static PyObject *Stream_send(Stream *self, PyObject *args);
+static PyObject *Stream_recv(Stream *self);
+static void Stream_dealloc(Stream *self);
 
 static PyMethodDef Stream_methods[] = {
 	{ "connect", (PyCFunction) Stream_connect, METH_KEYWORDS, "Connect stream to an XMPP server" },
@@ -19,7 +34,8 @@ static PyMethodDef Stream_methods[] = {
 };
 
 static PyTypeObject Stream_type = {
-	PyVarObject_HEAD_INIT(NULL,0)
+	PyObject_HEAD_INIT(NULL)
+	0,			/* ob_size */
 	"iksemel.Stream",	/* tp_name */
 	sizeof(Stream),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -70,7 +86,7 @@ start_sasl(Stream *self, enum ikssasltype type)
 
 	o = PyObject_GetAttrString(self->jid, "local");
 	if (!o) return;
-	local = PyBytes_AsString(o);
+	local = PyString_AsString(o);
 	if (!local) {
 		Py_DECREF(o);
 		return;
@@ -87,7 +103,7 @@ start_sasl(Stream *self, enum ikssasltype type)
 		Py_DECREF(o);
 		return;
 	}
-	pw = PyBytes_AsString(ret);
+	pw = PyString_AsString(ret);
 	if (!pw) {
 		Py_DECREF(ret);
 		Py_DECREF(o);
@@ -109,7 +125,7 @@ make_bind(Stream *self)
 
 	o = PyObject_GetAttrString(self->jid, "resource");
 	if (!o) return;
-	resource = PyBytes_AsString(o);
+	resource = PyString_AsString(o);
 	if (!resource) {
 		PyErr_Clear();
 		resource = "iksemel";
@@ -163,7 +179,7 @@ on_success(Stream *self, iks *node)
 
 	o = PyObject_GetAttrString(self->jid, "domain");
 	if (!o) return;
-	domain = PyBytes_AsString(o);
+	domain = PyString_AsString(o);
 	if (!domain) {
 		Py_DECREF(o);
 		return;
@@ -206,7 +222,7 @@ on_stream(Stream *self, int type, iks *node)
 #endif
 	hook = PyObject_GetAttrString((PyObject *) self, "on_stanza");
 	if (hook) {
-		doc = Document_parseString(NULL, node);
+		doc = Document_from_iks(NULL, node);
 		if (!doc) {
 			Py_DECREF(hook);
 			return IKS_NOMEM;
@@ -308,7 +324,7 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 
 	o = PyObject_GetAttrString(self->jid, "domain");
 	if (!o) return NULL;
-	host = PyBytes_AsString(o);
+	host = PyString_AsString(o);
 	if (!host) {
 		Py_DECREF(o);
 		return NULL;
@@ -316,7 +332,7 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 
 	e = iks_connect_tcp(self->parser, host, IKS_JABBER_PORT);
 	if (e) {
-		return exceptions_stream(e);
+		return exceptions_stream_error(e);
 	}
 
 	Py_DECREF(o);
@@ -343,12 +359,12 @@ Stream_send(Stream *self, PyObject *args)
 
 	s = PyObject_Str(s);
 	if (s) {
-		str = PyBytes_AsString(s);
+		str = PyString_AsString(s);
 		if (str) {
 			e = iks_send_raw(self->parser, str);
 			if (e) {
 				Py_DECREF(s);
-				return exceptions_stream(e);
+				return exceptions_stream_error(e);
 			}
 		}
 		Py_DECREF(s);
@@ -362,9 +378,10 @@ static PyObject *
 Stream_recv(Stream *self)
 {
 	int e;
+
 	e = iks_recv(self->parser, 0);
 	if (e) {
-		return exceptions_stream(e);
+		return exceptions_stream_error(e);
 	}
 
 	Py_INCREF(Py_None);
@@ -376,11 +393,11 @@ Stream_dealloc(Stream *self)
 {
 	if (self->jid) { Py_DECREF(self->jid); }
 	iks_parser_delete(self->parser);
-	PyTypeObject* ob_type(PyObject *self);
+	self->ob_type->tp_free((PyObject *) self);
 }
 
 void
-Setup_Stream(PyObject *module)
+Stream_setup(PyObject *module)
 {
 	Stream_type.tp_new = PyType_GenericNew;
 	if (PyType_Ready(&Stream_type) < 0) return;

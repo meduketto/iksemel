@@ -6,49 +6,33 @@
 
 #include "exceptions.h"
 
+static PyObject *parse_exc;
+static PyObject *stream_exc;
+
 void
-Setup_Exception(PyObject *module)
+exceptions_setup(PyObject *module)
 {
-	ParseError = PyErr_NewException("iksemel.ParseError", NULL, NULL);
-	Py_INCREF(ParseError);
-	PyModule_AddObject(module, "ParseError", ParseError);
-	NotTag = PyErr_NewException("iksemel.NotTag", NULL, NULL);
-	Py_INCREF(NotTag);
-	PyModule_AddObject(module, "NotTag", NotTag);
-	NotData = PyErr_NewException("iksemel.NotData", NULL, NULL);
-	Py_INCREF(NotData);
-	PyModule_AddObject(module, "NotData", NotData);
-	NotStream = PyErr_NewException("iksemel.NotStream", NULL, NULL);
-	Py_INCREF(NotStream);
-	PyModule_AddObject(module, "NotStream", NotStream);
+	parse_exc = PyErr_NewException("iksemel.ParseError", NULL, NULL);
+	Py_INCREF(parse_exc);
+	PyModule_AddObject(module, "ParseError", parse_exc);
+
+	stream_exc = PyErr_NewException("iksemel.StreamError", NULL, NULL);
+	Py_INCREF(stream_exc);
+	PyModule_AddObject(module, "StreamError", stream_exc);
 }
 
 // FIXME: provide err, lineno, etc
 PyObject *
-exceptions_parse(void)
+exceptions_parse_error(void)
 {
-	PyErr_SetNone(ParseError);
+	PyErr_SetNone(parse_exc);
 	return NULL;
 }
 
 // FIXME: more info on error type
 PyObject *
-exceptions_object_notdata(int e)
+exceptions_stream_error(int e)
 {
-	PyErr_SetNone(NotData);
-	return NULL;
-}
-
-PyObject *
-exceptions_object_nottag(int e)
-{
-	PyErr_SetNone(NotTag);
-	return NULL;
-}
-
-PyObject *
-exceptions_stream(int e)
-{
-	PyErr_SetNone(NotStream);
+	PyErr_SetNone(stream_exc);
 	return NULL;
 }

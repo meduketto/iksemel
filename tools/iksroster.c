@@ -23,6 +23,7 @@ static struct option longopts[] = {
 	{ "timeout", required_argument, 0, 't' },
 	{ "secure", 0, 0, 's' },
 	{ "sasl", 0, 0, 'a' },
+	{ "plain", 0, 0, 'p' },
 	{ "log", 0, 0, 'l' },
 	{ "help", 0, 0, 'h' },
 	{ "version", 0, 0, 'V' },
@@ -30,7 +31,7 @@ static struct option longopts[] = {
 };
 #endif
 
-static char *shortopts = "b:r:f:t:salhV";
+static char *shortopts = "b:r:f:t:saplhV";
 
 static void
 print_usage (void)
@@ -43,6 +44,7 @@ print_usage (void)
 		" -t, --timeout=SECS  Set network timeout.\n"
 		" -s, --secure        Use encrypted connection.\n"
 		" -a, --sasl          Use SASL authentication.\n"
+		" -p, --plain         Use plain text authentication.\n"
 		" -l, --log           Print exchanged xml data.\n"
 		" -h, --help          Print this text and exit.\n"
 		" -V, --version       Print version and exit.\n"
@@ -79,6 +81,7 @@ int opt_timeout = 30;
 /* connection flags */
 int opt_use_tls;
 int opt_use_sasl;
+int opt_use_plain;
 int opt_log;
 
 void
@@ -118,8 +121,10 @@ on_stream (struct session *sess, int type, iks *node)
 			}
 			if (!opt_use_sasl) {
 				iks *x;
+				char *sid = NULL;
 
-				x = iks_make_auth (sess->acc, sess->pass, iks_find_attrib (node, "id"));
+				if (!opt_use_plain) sid = iks_find_attrib (node, "id");
+				x = iks_make_auth (sess->acc, sess->pass, sid);
 				iks_insert_attrib (x, "id", "auth");
 				iks_send (sess->prs, x);
 				iks_delete (x);
@@ -315,6 +320,10 @@ main (int argc, char *argv[])
 				break;
 			case 'a':
 				opt_use_sasl = 1;
+				break;
+			case 'p':
+				opt_use_plain = 1;
+				opt_use_sasl = 0;
 				break;
 			case 'l':
 				opt_log = 1;

@@ -60,7 +60,6 @@ iks *iks_insert (iks *x, const char *name);
 iks *iks_insert_cdata (iks *x, const char *data, size_t len);
 iks *iks_insert_attrib (iks *x, const char *name, const char *value);
 iks *iks_insert_node (iks *x, iks *y);
-iks *iks_set_cdata(iks *x, const char *data, size_t len);
 iks *iks_append (iks *x, const char *name);
 iks *iks_prepend (iks *x, const char *name);
 iks *iks_append_cdata (iks *x, const char *data, size_t len);
@@ -176,6 +175,24 @@ typedef const struct ikstransport_struct {
 } ikstransport;
 
 extern ikstransport iks_default_transport;
+
+/*****  tls layer  *****/
+
+struct ikstls_data;
+
+typedef int (iksTlsHandshake)(struct ikstls_data **datap, ikstransport *trans, void *sock);
+typedef int (iksTlsSend)(struct ikstls_data *data, const char *buf, size_t size);
+typedef int (iksTlsRecv)(struct ikstls_data *data, char *buf, size_t size, int timeout);
+typedef void (iksTlsTerminate)(struct ikstls_data *data);
+
+typedef const struct ikstls_struct {
+	iksTlsHandshake *handshake;
+	iksTlsSend *send;
+	iksTlsRecv *recv;
+	iksTlsTerminate *terminate;
+} ikstls;
+
+extern ikstls iks_default_tls;
 
 /*****  stream parser  *****/
 

@@ -74,7 +74,7 @@ void iks_md5_reset(iksmd5 *md5)
 
 iksmd5 *iks_md5_new(void)
 {
-	iksmd5 *md5 = malloc(sizeof(iksmd5));
+	iksmd5 *md5 = iks_malloc(sizeof(iksmd5));
 
 	if (!md5)
 		return NULL;
@@ -107,6 +107,10 @@ void iks_md5_hash(iksmd5 *md5, const unsigned char *data, size_t slen, int finis
 	if (finish) {
 		md5->total[0] += 8*md5->blen;
 		md5->total[1] += (md5->total[0] < 8*md5->blen);
+		if (md5->blen == 64) {
+			iks_md5_compute(md5);
+			md5->blen = 0;
+		}
 		md5->buffer[(md5->blen)++] = 0x80;
 		if (md5->blen > 56) {
 			while (md5->blen < 64)
@@ -124,7 +128,7 @@ void iks_md5_hash(iksmd5 *md5, const unsigned char *data, size_t slen, int finis
 
 void iks_md5_delete(iksmd5 *md5)
 {
-	free(md5);
+	iks_free(md5);
 }
 
 void iks_md5_digest(iksmd5 *md5, unsigned char *digest)
@@ -137,7 +141,7 @@ void iks_md5_digest(iksmd5 *md5, unsigned char *digest)
 
 void iks_md5_print(iksmd5 *md5, char *buf)
 {
-  int i;
+	int i;
 	unsigned char digest[16];
 
 	iks_md5_digest(md5, digest);
@@ -186,4 +190,3 @@ static void iks_md5_compute(iksmd5 *md5)
 	for (i = 0; i < 4; ++i)
 		md5->state[i] += R[i];
 }
-

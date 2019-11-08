@@ -128,24 +128,6 @@ iks_insert_cdata (iks *x, const char *data, size_t len)
 }
 
 iks *
-iks_set_cdata(iks *x, const char *data, size_t len)
-{
-	iks *y;
-
-	if (!x || !data) return NULL;
-	if (len == 0) len = strlen(data);
-
-	while (1) {
-		y = iks_child(x);
-		if (!y) break;
-		iks_hide(y);
-	}
-
-	y = iks_insert_cdata(x, data, len);
-	return y;
-}
-
-iks *
 iks_insert_attrib (iks *x, const char *name, const char *value)
 {
 	iks *y;
@@ -609,8 +591,8 @@ iks_string (ikstack *s, iks *x)
 		if (s) {
 			return iks_stack_strdup (s, IKS_CDATA_CDATA (x), IKS_CDATA_LEN (x));
 		} else {
-			ret = iks_malloc (IKS_CDATA_LEN (x));
-			memcpy (ret, IKS_CDATA_CDATA (x), IKS_CDATA_LEN (x));
+			ret = iks_malloc (IKS_CDATA_LEN (x) + 1);
+			memcpy (ret, IKS_CDATA_CDATA (x), IKS_CDATA_LEN (x) + 1);
 			return ret;
 		}
 	}

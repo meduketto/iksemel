@@ -7,10 +7,6 @@
 #include "common.h"
 #include "iksemel.h"
 
-#ifdef HAVE_GNUTLS
-#include <gnutls/gnutls.h>
-#endif
-
 #define SF_FOREIGN 1
 #define SF_TRY_SECURE 2
 #define SF_SECURE 4
@@ -30,82 +26,8 @@ struct stream_data {
 	unsigned int flags;
 	char *auth_username;
 	char *auth_pass;
-#ifdef HAVE_GNUTLS
-	gnutls_session sess;
-	gnutls_certificate_credentials cred;
-#endif
+	struct ikstls_data *tlsdata;
 };
-
-#ifdef HAVE_GNUTLS
-
-static size_t
-tls_push (iksparser *prs, const char *buffer, size_t len)
-{
-	struct stream_data *data = iks_user_data (prs);
-	int ret;
-
-	ret = data->trans->send (data->sock, buffer, len);
-	if (ret) return (size_t) -1;
-	return len;
-}
-
-static size_t
-tls_pull (iksparser *prs, char *buffer, size_t len)
-{
-	struct stream_data *data = iks_user_data (prs);
-	int ret;
-
-	ret = data->trans->recv (data->sock, buffer, len, -1);
-	if (ret == -1) return (size_t) -1;
-	return ret;
-}
-
-static int
-handshake (struct stream_data *data)
-{
-	const int protocol_priority[] = { GNUTLS_TLS1, GNUTLS_SSL3, 0 };
-	const int kx_priority[] = { GNUTLS_KX_RSA, 0 };
-	const int cipher_priority[] = { GNUTLS_CIPHER_3DES_CBC, GNUTLS_CIPHER_ARCFOUR, 0};
-	const int comp_priority[] = { GNUTLS_COMP_ZLIB, GNUTLS_COMP_NULL, 0 };
-	const int mac_priority[] = { GNUTLS_MAC_SHA, GNUTLS_MAC_MD5, 0 };
-	int ret;
-
-	if (gnutls_global_init () != 0)
-		return IKS_NOMEM;
-
-	if (gnutls_certificate_allocate_credentials (&data->cred) < 0)
-		return IKS_NOMEM;
-
-	if (gnutls_init (&data->sess, GNUTLS_CLIENT) != 0) {
-		gnutls_certificate_free_credentials (data->cred);
-		return IKS_NOMEM;
-	}
-	gnutls_protocol_set_priority (data->sess, protocol_priority);
-	gnutls_cipher_set_priority(data->sess, cipher_priority);
-	gnutls_compression_set_priority(data->sess, comp_priority);
-	gnutls_kx_set_priority(data->sess, kx_priority);
-	gnutls_mac_set_priority(data->sess, mac_priority);
-	gnutls_credentials_set (data->sess, GNUTLS_CRD_CERTIFICATE, data->cred);
-
-	gnutls_transport_set_push_function (data->sess, (gnutls_push_func) tls_push);
-	gnutls_transport_set_pull_function (data->sess, (gnutls_pull_func) tls_pull);
-	gnutls_transport_set_ptr (data->sess, data->prs);
-
-	ret = gnutls_handshake (data->sess);
-	if (ret != 0) {
-		gnutls_deinit (data->sess);
-		gnutls_certificate_free_credentials (data->cred);
-		return IKS_NET_TLSFAIL;
-	}
-
-	data->flags &= (~SF_TRY_SECURE);
-	data->flags |= SF_SECURE;
-
-	iks_send_header (data->prs, data->server);
-
-	return IKS_OK;
-}
-#endif
 
 static void
 insert_attribs (iks *x, char **atts)
@@ -270,16 +192,20 @@ tagHook (struct stream_data *data, char *name, char **atts, int type)
 	switch (type) {
 		case IKS_OPEN:
 		case IKS_SINGLE:
-#ifdef HAVE_GNUTLS
 			if (data->flags & SF_TRY_SECURE) {
 				if (strcmp (name, "proceed") == 0) {
-					err = handshake (data);
+					err = iks_default_tls.handshake (&data->tlsdata,
+						data->trans, data->sock);
+					if (err == IKS_OK) {
+						data->flags &= (~SF_TRY_SECURE);
+						data->flags |= SF_SECURE;
+						iks_send_header (data->prs, data->server);
+					}
 					return err;
 				} else if (strcmp (name, "failure") == 0){
 					return IKS_NET_TLSFAIL;
 				}
 			}
-#endif
 			if (data->current) {
 				x = iks_insert (data->current, name);
 				insert_attribs (x, atts);
@@ -303,9 +229,10 @@ tagHook (struct stream_data *data, char *name, char **atts, int type)
 			}
 			if (NULL == iks_parent (x)) {
 				data->current = NULL;
-				if (iks_strcmp (name, "challenge") == 0)
+				if (iks_strcmp (name, "challenge") == 0) {
 					iks_sasl_challenge(data, x);
-				else if (iks_strcmp (name, "stream:error") == 0) {
+					iks_delete (x);
+				} else if (iks_strcmp (name, "stream:error") == 0) {
 					err = data->streamHook (data->user_data, IKS_NODE_ERROR, x);
 					if (err != IKS_OK) return err;
 				} else {
@@ -329,13 +256,10 @@ cdataHook (struct stream_data *data, char *cdata, size_t len)
 static void
 deleteHook (struct stream_data *data)
 {
-#ifdef HAVE_GNUTLS
 	if (data->flags & SF_SECURE) {
-		gnutls_bye (data->sess, GNUTLS_SHUT_WR);
-		gnutls_deinit (data->sess);
-		gnutls_certificate_free_credentials (data->cred);
+		iks_default_tls.terminate(data->tlsdata);
+		data->tlsdata = NULL;
 	}
-#endif
 	if (data->trans) data->trans->close (data->sock);
 	data->trans = NULL;
 	if (data->current) iks_delete (data->current);
@@ -487,12 +411,10 @@ iks_recv (iksparser *prs, int timeout)
 	int len, ret;
 
 	while (1) {
-#ifdef HAVE_GNUTLS
 		if (data->flags & SF_SECURE) {
-			len = gnutls_record_recv (data->sess, data->buf, NET_IO_BUF_SIZE - 1);
-		} else
-#endif
-		{
+			len = iks_default_tls.recv(data->tlsdata, data->buf,
+				NET_IO_BUF_SIZE - 1, timeout);
+		} else {
 			len = data->trans->recv (data->sock, data->buf, NET_IO_BUF_SIZE - 1, timeout);
 		}
 		if (len < 0) return IKS_NET_RWERR;
@@ -542,12 +464,10 @@ iks_send_raw (iksparser *prs, const char *xmlstr)
 	struct stream_data *data = iks_user_data (prs);
 	int ret;
 
-#ifdef HAVE_GNUTLS
 	if (data->flags & SF_SECURE) {
-		if (gnutls_record_send (data->sess, xmlstr, strlen (xmlstr)) < 0) return IKS_NET_RWERR;
-	} else
-#endif
-	{
+		if (iks_default_tls.send(data->tlsdata, xmlstr, strlen (xmlstr)) != IKS_OK)
+			return IKS_NET_RWERR;
+	} else {
 		ret = data->trans->send (data->sock, xmlstr, strlen (xmlstr));
 		if (ret) return ret;
 	}
@@ -566,39 +486,30 @@ iks_disconnect (iksparser *prs)
 int
 iks_has_tls (void)
 {
-#ifdef HAVE_GNUTLS
-	return 1;
-#else
-	return 0;
-#endif
+	return iks_default_tls.handshake != NULL;
 }
 
 int
 iks_is_secure (iksparser *prs)
 {
-#ifdef HAVE_GNUTLS
 	struct stream_data *data = iks_user_data (prs);
 
 	return data->flags & SF_SECURE;
-#else
-	return 0;
-#endif
 }
 
 int
 iks_start_tls (iksparser *prs)
 {
-#ifdef HAVE_GNUTLS
 	int ret;
 	struct stream_data *data = iks_user_data (prs);
+
+	if (iks_default_tls.handshake == NULL)
+		return IKS_NET_NOTSUPP;
 
 	ret = iks_send_raw (prs, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
 	if (ret) return ret;
 	data->flags |= SF_TRY_SECURE;
 	return IKS_OK;
-#else
-	return IKS_NET_NOTSUPP;
-#endif
 }
 
 /*****  sasl  *****/
