@@ -1,3 +1,16 @@
+2019-10-08  Zaryob
+
+  * The Developments that I used for my own project and made to the piksemel
+  version which was distributed in the past by TUBITAK/Pardus, now I am also
+  making the main branch.
+      - Python3 support have been added:
+        - Because of the complexity of iksemel and huge changes between python3
+          and python2 c-api is caused  to create an incompatible port to versions
+          older than 3.2
+
+2016-12-02  Zaryob
+  * Initial commit
+
 2011-10-18  Gurer
 	* python/: Python bindings and test scripts
 
@@ -502,15 +515,15 @@
 	* test/testiks.c: removed buggy unit test for previous entry,
 	  since I couldn't figure out why it segfaulted. Will investigate
 	  and fix later.
-	
+
 2002-01-07  Evan Prodromou <mr.bad@pigdog.org>
 	* core.c: fixed off-by-one bug with reallocation of attributes.
 	* test/testiks.c: added test for above bug.
-	
+
 2002-12-20  Evan Prodromou <mr.bad@pigdog.org>
 	* COPYING: New version of the LGPL.
 	* INSTALL: New FSF install info. Both of these were updated by autoreconf.
-		
+
 2002-12-12  Evan Prodromou <mr.bad@pigdog.org>
 	* include/iksemel.h: added id to Jabber packets.
 	* src/jabber.c: get ID in Jabber packets.
@@ -531,7 +544,7 @@
 	* iks.c: fixed iks constructor/destructor so they mark pool owner
 	  and only delete the pool if the iks is the owner.
 	* sha.c: changed sha objects to use pool memory.
-	
+
 2002-11-07  Evan Prodromou <mr.bad@pigdog.org>
 
 	* ikspool.c: added ALIGN_ON, ALIGNED(), *_OFFSET macros.
@@ -556,7 +569,7 @@
 	* ikspool.c: For iks_pool_realloc, made it call _alloc if the
 	  passed-in pointer is NULL. This is the way realloc() works.
         * testpool.c: added a test for the above condition.
-	
+
 2002-11-04  Evan Prodromou <mr.bad@pigdog.org>
 
 	* ikspool.c: Added some comments.
@@ -573,12 +586,12 @@
 	           previously NULL.
 	* testid.c: added tests to check for above bug.
 	* test/.cvsignore: Ignore testpool and testid.
-	
+
 2002-11-03  Evan Prodromou <mr.bad@pigdog.org>
 
 	* iksid.c: fixed bug in iks_id_new with partial (no resource) IDs.
 	* testid.c: added tests to check for above bug.
-	
+
 2002-11-03  Evan Prodromou <mr.bad@pigdog.org>
 
 	* iksid.c: moved iksid functions to this file from jabber.c.
@@ -587,13 +600,13 @@
 		   made iks_id_new use iks_pool_set_owner if it creates a pool.
 		   changed iks_id_new so it doesn't write on src.
 	* iksemel.h: added prototype for iks_id_delete.
-	* testid.c: created basic unit tests for iksid.	
+	* testid.c: created basic unit tests for iksid.
 
 2002-11-02  Evan Prodromou <mr.bad@pigdog.org>
 
 	* Added the beginnings of unit tests for memory allocation.
 	  More needed.
-		
+
 2002-11-02  Evan Prodromou <mr.bad@pigdog.org>
 
 	* ikspool.c: added new best-fit memory allocation functions.

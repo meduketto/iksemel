@@ -20,8 +20,7 @@ static PyObject *Iter_iter(Iter *self);
 static PyObject *Iter_next(Iter *self);
 
 static PyTypeObject Iter_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Iter",		/* tp_name */
 	sizeof(Iter),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -160,8 +159,7 @@ static PyMethodDef Document_methods[] = {
 };
 
 static PyTypeObject Document_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Document",	/* tp_name */
 	sizeof(Document),	/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -636,7 +634,7 @@ Document_dealloc(Document *self)
 	Py_DECREF(self->ref);
 	self->doc = NULL;
 	self->ref = NULL;
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void

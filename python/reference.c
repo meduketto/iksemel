@@ -13,8 +13,7 @@ typedef struct {
 static void Reference_dealloc(Reference *self);
 
 static PyTypeObject Reference_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Reference",	/* tp_name */
 	sizeof(Reference),	/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -57,7 +56,7 @@ static PyTypeObject Reference_type = {
 static void
 Reference_dealloc(Reference *self)
 {
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void

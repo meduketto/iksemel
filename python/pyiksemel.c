@@ -13,12 +13,35 @@
 
 PyObject *iksemel_module;
 
+/*static PyMethodDef methods[] = {
+	{ "parse", ciks_parse, METH_VARARGS,
+	  "Parse given XML file and generate document tree."},
+	{ "parseString", ciks_parseString, METH_VARARGS,
+	  "Parse given XML string and generate document tree."},
+	{ "newDocument", ciks_newDocument, METH_VARARGS,
+	  "Create a new document with given root tag name."},
+	{ NULL, NULL, 0, NULL }
+};*/
+
+static struct PyModuleDef iksemeldef = {
+    PyModuleDef_HEAD_INIT,
+    "iksemel",     /* m_name */
+    "This is a module",  /* m_doc */
+    -1,                  /* m_size */
+    NULL,                /* m_methods */
+    NULL,                /* m_reload */
+    NULL,                /* m_traverse */
+    NULL,                /* m_clear */
+    NULL,                /* m_free */
+};
+
+
 PyMODINIT_FUNC
-initiksemel(void)
+PyInit_iksemel(void)
 {
 	PyObject *m;
 
-	m = Py_InitModule("iksemel", NULL);
+	m = PyModule_Create(&iksemeldef);
 
 	exceptions_setup(m);
 	Reference_setup();
@@ -27,4 +50,5 @@ initiksemel(void)
 	Stream_setup(m);
 
 	iksemel_module = m;
+  return m;
 }

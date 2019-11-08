@@ -1,0 +1,85 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+build/
+__pycache__/
+# Debug files
+*.dSYM/
+
+#Autotool files
+aclocal.m4
+autom4te.cache/
+
+#Configure files
+config.guess
+config.status
+config.sub
+config.log
+configure
+config.h.in
+*.log
+*.trs
+.deps/
+.libs/
+
+
+#Iks compiled files
+doc/iksemel
+include/config.h
+include/stamp-h1
+tools/ikslint
+tools/iksperf
+tools/iksroster
+test/tst-dom
+test/tst-filter
+test/tst-iks
+test/tst-ikstack
+test/tst-jid
+test/tst-sha
+test/tst-md5
+test/tst-sax
+
+
+#Makefile files
+Makefile
+Makefile.in
+
+#Tex files
+*.tex
+
+#Libtool files
+libtool
+*.pc
+missing
+depcomp
+install-sh
+compile
+ltmain.sh
+test-driver

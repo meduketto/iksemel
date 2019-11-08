@@ -34,8 +34,7 @@ static PyMethodDef Stream_methods[] = {
 };
 
 static PyTypeObject Stream_type = {
-	PyObject_HEAD_INIT(NULL)
-	0,			/* ob_size */
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"iksemel.Stream",	/* tp_name */
 	sizeof(Stream),		/* tp_basicsize */
 	0,			/* tp_itemsize */
@@ -86,7 +85,7 @@ start_sasl(Stream *self, enum ikssasltype type)
 
 	o = PyObject_GetAttrString(self->jid, "local");
 	if (!o) return;
-	local = PyString_AsString(o);
+	local = PyBytes_AsString(o);
 	if (!local) {
 		Py_DECREF(o);
 		return;
@@ -103,7 +102,7 @@ start_sasl(Stream *self, enum ikssasltype type)
 		Py_DECREF(o);
 		return;
 	}
-	pw = PyString_AsString(ret);
+	pw = PyBytes_AsString(ret);
 	if (!pw) {
 		Py_DECREF(ret);
 		Py_DECREF(o);
@@ -125,7 +124,7 @@ make_bind(Stream *self)
 
 	o = PyObject_GetAttrString(self->jid, "resource");
 	if (!o) return;
-	resource = PyString_AsString(o);
+	resource = PyBytes_AsString(o);
 	if (!resource) {
 		PyErr_Clear();
 		resource = "iksemel";
@@ -179,7 +178,7 @@ on_success(Stream *self, iks *node)
 
 	o = PyObject_GetAttrString(self->jid, "domain");
 	if (!o) return;
-	domain = PyString_AsString(o);
+	domain = PyBytes_AsString(o);
 	if (!domain) {
 		Py_DECREF(o);
 		return;
@@ -324,7 +323,7 @@ Stream_connect(Stream *self, PyObject *args, PyObject *kwargs)
 
 	o = PyObject_GetAttrString(self->jid, "domain");
 	if (!o) return NULL;
-	host = PyString_AsString(o);
+	host = PyBytes_AsString(o);
 	if (!host) {
 		Py_DECREF(o);
 		return NULL;
@@ -359,7 +358,7 @@ Stream_send(Stream *self, PyObject *args)
 
 	s = PyObject_Str(s);
 	if (s) {
-		str = PyString_AsString(s);
+		str = PyBytes_AsString(s);
 		if (str) {
 			e = iks_send_raw(self->parser, str);
 			if (e) {
@@ -393,7 +392,7 @@ Stream_dealloc(Stream *self)
 {
 	if (self->jid) { Py_DECREF(self->jid); }
 	iks_parser_delete(self->parser);
-	self->ob_type->tp_free((PyObject *) self);
+	PyTypeObject* ob_type(PyObject *self);
 }
 
 void
