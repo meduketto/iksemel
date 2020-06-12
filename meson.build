@@ -1,24 +1,35 @@
 project('iksemel','c',
-  version : '0.1',
   default_options : ['warning_level=3'])
 
-if get_option('python')
-  python = find_program('python3')
-  pythonver = run_command(python, '-c', 'import sys; print("%s.%s" % sys.version_info[:2], end="")').stdout()
+version = get_option('version')
 
-  # or via language_version()
-  python = import('python')
-  pythonver = python.find_installation('python3').language_version()
-
-  python_dep = dependency('python-@0@'.format(pythonver), version: '>=3', required: true)
-  subdir('python')
-endif
 
 include_dir = include_directories('include')
 
 subdir('include')
 subdir('src')
-#subdir('tests')
 
+if get_option('tests')
+  subdir('test')
+endif
 
-#test('basic', exe)
+if get_option('with_python')
+  subdir('python')
+endif
+
+pkgconf = configuration_data()
+
+pkgconf.set('prefix', join_paths(get_option('prefix')))
+pkgconf.set('exec_prefix', '${prefix}')
+pkgconf.set('includedir', join_paths('${prefix}', get_option('includedir')))
+pkgconf.set('libdir', join_paths('${prefix}', get_option('libdir')))
+pkgconf.set('datarootdir', join_paths('${prefix}', get_option('datadir')))
+pkgconf.set('datadir', '${datarootdir}')
+pkgconf.set('VERSION', version)
+
+pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
+
+configure_file(input : 'iksemel.pc.in'.format(version),
+  output : 'iksemel-@0@.pc'.format(version),
+  configuration : pkgconf,
+  install_dir : pkg_install_dir)

@@ -1,4 +1,21 @@
-option('python',
+option('version',
+       type : 'string',
+       value : '1.6',
+       description : 'Project version'
+       )
+option('with_python',
        type : 'boolean',
        value : false,
-       description : 'build with python binding libraries')
+       description : 'build with python binding libraries'
+       )
+
+option('python',
+       type : 'string',
+       value : 'python3'
+       )
+
+option('tests',
+      type : 'boolean',
+      value : false,
+      description : 'control iksemel with unittests'
+      )

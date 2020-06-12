@@ -1,4 +1,3 @@
-
 cc = meson.get_compiler('c')
 cdata = configuration_data()
 check_headers = [

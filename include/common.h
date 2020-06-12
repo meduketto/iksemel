@@ -8,11 +8,11 @@
 
 #include <sys/types.h>
 #include <stdio.h>
-
-#ifdef STDC_HEADERS
-#include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
 #elif HAVE_STRINGS_H
 #include <strings.h>
 #endif
