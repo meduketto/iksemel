@@ -1,0 +1,97 @@
+/* include/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#mesondefine HAVE_DLFCN_H
+
+/* Define to 1 if you have the <errno.h> header file. */
+#mesondefine HAVE_ERRNO_H
+
+/* Define to 1 if you have the `getaddrinfo' function. */
+#mesondefine HAVE_GETADDRINFO
+
+/* Define to 1 if you have the `getopt_long' function. */
+#mesondefine HAVE_GETOPT_LONG
+
+/* whether to use GnuTSL support. */
+#mesondefine HAVE_GNUTLS
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#mesondefine HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `wsock32' library (-lwsock32). */
+#mesondefine HAVE_LIBWSOCK32
+
+/* Define to 1 if you have the <memory.h> header file. */
+#mesondefine HAVE_MEMORY_H
+
+/* whether to use OpenSSL support. */
+#mesondefine HAVE_OPENSSL
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#mesondefine HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#mesondefine HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#mesondefine HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#mesondefine HAVE_STRING_H
+
+/* Define to 1 if `st_blksize' is a member of `struct stat'. */
+#mesondefine HAVE_STRUCT_STAT_ST_BLKSIZE
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#mesondefine HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#mesondefine HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#mesondefine HAVE_UNISTD_H
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#mesondefine LT_OBJDIR
+
+/* Name of package */
+#mesondefine PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#mesondefine PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#mesondefine PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#mesondefine PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#mesondefine PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#mesondefine PACKAGE_URL
+
+/* Define to the version of this package. */
+#mesondefine PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#mesondefine STDC_HEADERS
+
+/* Define this is you want default transport */
+#mesondefine USE_DEFAULT_IO
+
+/* Version number of package */
+#mesondefine VERSION
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#mesondefine const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#mesondefine inline
+#endif
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#mesondefine size_t

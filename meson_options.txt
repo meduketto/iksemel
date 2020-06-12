@@ -1,0 +1,4 @@
+option('python',
+       type : 'boolean',
+       value : false,
+       description : 'build with python binding libraries')
