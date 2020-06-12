@@ -70,6 +70,7 @@ struct iksparser_struct {
 
 	int uni_max;
 	int uni_len;
+	unsigned int uni_char;
 };
 
 iksparser *
@@ -149,7 +150,8 @@ stack_expand (iksparser *prs, int len)
 	if (need < prs->stack_max) {
 		need = prs->stack_max * 2;
 	} else {
-		need = prs->stack_max + (need * 1.2);
+		/* need x 1.2 for integer only archs like ARM */
+		need = prs->stack_max + ( (need * 6) / 5);
 	}
 	tmp = iks_malloc (need);
 	if (!tmp) return 0;
@@ -207,8 +209,24 @@ sax_core (iksparser *prs, char *buf, int len)
 		if (0 == c || 0xFE == c || 0xFF == c) return IKS_BADXML;
 		if (prs->uni_max) {
 			if ((c & 0xC0) != 0x80) return IKS_BADXML;
+			prs->uni_char <<= 6;
+			prs->uni_char += (c & 0x3f);
 			prs->uni_len++;
-			if (prs->uni_len == prs->uni_max) prs->uni_max = 0;
+			if (prs->uni_len == prs->uni_max) {
+				/* Security check: avoid overlong sequences */
+				if (prs->uni_max == 2 && prs->uni_char < 0x80)
+					return IKS_BADXML;
+				if (prs->uni_max == 3 && prs->uni_char < 0x7FF)
+					return IKS_BADXML;
+				if (prs->uni_max == 4 && prs->uni_char < 0xffff)
+					return IKS_BADXML;
+				if (prs->uni_max == 5 && prs->uni_char < 0x1fffff)
+					return IKS_BADXML;
+				if (prs->uni_max == 6 && prs->uni_char < 0x3ffffff)
+					return IKS_BADXML;
+				prs->uni_max = 0;
+				prs->uni_char = 0;
+			}
 			goto cont;
 		} else {
 			if (c & 0x80) {
@@ -231,7 +249,7 @@ sax_core (iksparser *prs, char *buf, int len)
 				} else {
 					return IKS_BADXML;
 				}
-				if ((c & mask) == 0) return IKS_BADXML;
+				prs->uni_char = c & mask;
 				prs->uni_len = 1;
 				if (stack_old == -1
 					&& (prs->context == C_TAG
@@ -252,7 +270,8 @@ sax_core (iksparser *prs, char *buf, int len)
 					prs->context = C_ENTITY;
 					prs->entpos = 0;
 					break;
-				}else if ('<' == c) {
+				}
+				if ('<' == c) {
 					if (old < pos && prs->cdataHook) {
 						err = prs->cdataHook (prs->user_data, &buf[old], pos - old);
 						if (IKS_OK != err) return err;
@@ -269,10 +288,12 @@ sax_core (iksparser *prs, char *buf, int len)
 				if ('/' == c) {
 					prs->tagtype = IKS_CLOSE;
 					break;
-				}else if ('?' == c) {
+				}
+				if ('?' == c) {
 					prs->context = C_PI;
 					break;
-				}else if ('!' == c) {
+				}
+				if ('!' == c) {
 					prs->context = C_MARKUP;
 					break;
 				}
@@ -291,7 +312,8 @@ sax_core (iksparser *prs, char *buf, int len)
 					stack_old = -1;
 					STACK_PUSH_END;
 					break;
-				}else if ('/' == c) {
+				}
+				if ('/' == c) {
 					if (IKS_CLOSE == prs->tagtype) return IKS_BADXML;
 					prs->tagtype = IKS_SINGLE;
 					prs->context = C_TAG_END;
@@ -299,7 +321,8 @@ sax_core (iksparser *prs, char *buf, int len)
 					stack_old = -1;
 					STACK_PUSH_END;
 					break;
-				}else if ('>' == c) {
+				}
+				if ('>' == c) {
 					prs->context = C_TAG_END;
 					if (stack_old != -1) STACK_PUSH (buf + stack_old, pos - stack_old);
 					stack_old = -1;
@@ -331,7 +354,8 @@ sax_core (iksparser *prs, char *buf, int len)
 					prs->tagtype = IKS_SINGLE;
 					prs->context = C_TAG_END;
 					break;
-				}else if ('>' == c) {
+				}
+				if ('>' == c) {
 					prs->context = C_TAG_END;
 					re = 1;
 					break;
@@ -343,7 +367,7 @@ sax_core (iksparser *prs, char *buf, int len)
 					memset (prs->atts, 0, sizeof(char *) * 2 * 12);
 					prs->attcur = 0;
 				} else {
-					if (prs->attcur >= (prs->attmax * 2)) {
+					if (prs->attcur >= ((prs->attmax - 1) * 2)) {
 						void *tmp;
 						prs->attmax += 12;
 						tmp = iks_malloc (sizeof(char *) * 2 * prs->attmax);
@@ -368,6 +392,14 @@ sax_core (iksparser *prs, char *buf, int len)
 					prs->context = C_VALUE;
 					break;
 				}
+				if (IS_WHITESPACE(c)) {
+					if (stack_old != -1) STACK_PUSH (buf + stack_old, pos - stack_old);
+					stack_old = -1;
+					STACK_PUSH_END;
+					prs->oldcontext = C_ATTRIBUTE_1;
+					prs->context = C_WHITESPACE;
+					break;
+				}
 				if (stack_old == -1) stack_old = pos;
 				break;
 
@@ -377,7 +409,8 @@ sax_core (iksparser *prs, char *buf, int len)
 					prs->atts[prs->attcur] = NULL;
 					prs->context = C_TAG_END;
 					break;
-				}else if ('>' == c) {
+				}
+				if ('>' == c) {
 					prs->atts[prs->attcur] = NULL;
 					prs->context = C_TAG_END;
 					re = 1;
@@ -388,11 +421,13 @@ sax_core (iksparser *prs, char *buf, int len)
 				break;
 
 			case C_VALUE:
+				if (IS_WHITESPACE(c)) break;
 				prs->atts[prs->attcur + 1] = STACK_PUSH_START;
 				if ('\'' == c) {
 					prs->context = C_VALUE_APOS;
 					break;
-				}else if ('"' == c) {
+				}
+				if ('"' == c) {
 					prs->context = C_VALUE_QUOT;
 					break;
 				}
@@ -483,7 +518,8 @@ sax_core (iksparser *prs, char *buf, int len)
 				if ('[' == c) {
 					prs->context = C_SECT;
 					break;
-				}else if ('-' == c) {
+				}
+				if ('-' == c) {
 					prs->context = C_COMMENT;
 					break;
 				}
@@ -557,12 +593,19 @@ sax_core (iksparser *prs, char *buf, int len)
 					old = pos + 1;
 					prs->context = C_CDATA;
 				} else {
-					if (prs->cdataHook) {
-						err = prs->cdataHook (prs->user_data, "]]", 2);
-						if (IKS_OK != err) return err;
-					}
 					old = pos;
-					prs->context = C_SECT_CDATA_C;
+					if (']' == c) {
+						if (prs->cdataHook) {
+							err = prs->cdataHook (prs->user_data, "]", 1);
+							if (IKS_OK != err) return err;
+						}
+					} else {
+						prs->context = C_SECT_CDATA_C;
+						if (prs->cdataHook) {
+							err = prs->cdataHook (prs->user_data, "]]", 2);
+							if (IKS_OK != err) return err;
+						}
+					}
 				}
 				break;
 
@@ -612,6 +655,7 @@ iks_parser_reset (iksparser *prs)
 	prs->nr_lines = 0;
 	prs->uni_max = 0;
 	prs->uni_len = 0;
+	prs->uni_char = 0;
 }
 
 void
