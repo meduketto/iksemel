@@ -15,7 +15,7 @@ char *iks_base64_decode(const char *buf)
 {
 	char *res, *save;
 	char val;
-        const char *foo; 
+        const char *foo;
 	const char *end;
 	int index;
 	size_t len;
