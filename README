@@ -6,6 +6,43 @@
 Copyright (c) 2000-2011 Gurer Ozen <meduketto at gmail.com>
 
 
+IMPORTANT NOTICE:
+-----------------
+
+After a decade of active development, and another decade of very low
+effort maintenance period, Iksemel ended up with a lot of bit rot.
+It is NOT suitable for production use anymore. In particular,
+the SSL code and settings are now highly insecure, and the active
+Python versions are not supported for the Python bindings.
+
+Part of the reason was that XML is replaced by much better formats
+such as JSON or YAML for many use cases, and even Jabber/XMPP
+is not as popular as before.
+
+It is possible to fix all of these, but I just don't see any value in
+spending any effort on the C code anymore. Rust is not just a better
+language than C in every way, but it is a must to use for system
+and network infrastructure in this age where software controls every
+aspect of our lives and security is severely under-resourced.
+
+Even when using the custom memory management techniques of iksemel
+and using a lot of unsafe Rust for the implementation, overall
+development process was considerably better than the C version.
+Type system of the Rust made it possible to encapsulate the
+complicated tricks under an API, impossible to use incorrectly.
+The Rust compiler and tooling was catching all sorts of common
+bugs which usually goes unnoticed in C even under unsafe code.
+
+Follow the development of new iksemel-rust at https://github.com/meduketto/iksemel-rust
+
+This code base will be kept as a historical record.
+
+If you must still use the C version because you have to maintain
+an old code base, https://github.com/Zaryob/iksemel seems to be
+decent fork.
+
+
+
 Introduction:
 -------------
 
