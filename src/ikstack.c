@@ -88,9 +88,11 @@ iks_stack_alloc (ikstack *s, size_t size)
 	if (size < MIN_ALLOC_SIZE) size = MIN_ALLOC_SIZE;
 	if (size & ALIGN_MASK) size = ALIGN (size);
 
+	size += DEFAULT_ALIGNMENT; /* to enable alignment of space */
 	c = find_space (s, s->meta, size);
 	if (!c) return NULL;
 	mem = c->data + c->used;
+	mem = (void *)ALIGN((char *)mem - (char *)0);
 	c->used += size;
 	return mem;
 }
